@@ -1,0 +1,1 @@
+Unzip and place on running user's Desktop.
