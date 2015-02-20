@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+
+<Replacers>
+	<Property id='Race'>
+		<Value id='0'>
+			<Adjective>human</Adjective>
+		</Value>
+		<Value id='1'>
+			<Adjective>feline</Adjective>
+			<Adjective>cat-like</Adjective>
+		</Value>
+		<Value id='2'>
+			<Adjective>canid</Adjective>
+			<Adjective>dog-like</Adjective>
+		</Value>
+		<Value id='3'>
+			<Adjective>dragon</Adjective>
+			<Adjective>dragon-like</Adjective>
+		</Value>
+		<Value id='4'>
+			<Adjective>stallion</Adjective>
+			<Adjective>horse-like</Adjective>
+		</Value>
+		<Value id='5'>
+			<Adjective>holstaurus</Adjective>
+			<Adjective>cow-like</Adjective>
+		</Value>
+	</Property>
+	
+	<Property id='PhysicalGender'>
+		<Value id='0'>
+			<Adjective>female</Adjective>
+		</Value>
+		<Value id='1'>
+			<Adjective>male</Adjective>
+		</Value>
+	</Property>
+	
+	<Property id='GenderIdentity'>
+		<Value id='0'>
+			<Adjective>female</Adjective>
+		</Value>
+		<Value id='1'>
+			<Adjective>male</Adjective>
+		</Value>
+		<Value id='2'>
+			<Adjective>spivak</Adjective>
+		</Value>
+	</Property>
+	
+	<Property id='SkinQuality'>
+		<Value id='0'>
+			<Adjective>flawless</Adjective>
+		</Value>
+		<Value id='1'>
+			<Adjective>clear</Adjective>
+		</Value>
+		<Value id='2'>
+			<Adjective>normal</Adjective>
+		</Value>
+		<Value id='3'>
+			<Adjective>freckly</Adjective>
+		</Value>
+		<Value id='4'>
+			<Adjective>dry</Adjective>
+		</Value>
+		<Value id='5'>
+			<Adjective>wrinkly</Adjective>
+		</Value>
+	</Property>
+	
+	<Proprtyu id='SkinColour'>
+		<Value id='0'>
+			<Adjective>pale</Adjective>
+		</Value>
+		<Value id='1'>
+			<Adjective>light</Adjective>
+		</Value>
+		<Value id='2'>
+			<Adjective>fair</Adjective>
+		</Value>
+		<Value id='3'>
+			<Adjective>tan</Adjective>
+		</Value>
+		<Value id='4'>
+			<Adjective>olive</Adjective>
+		</Value>
+		<Value id='5'>
+			<Adjective>brown</Adjective>
+		</Value>
+		<Value id='6'>
+			<Adjective>ebony</Adjective>
+		</Value>
+		<Value id='7'>
+			<Adjective>black</Adjective>
+		</Value>
+	</Proprtyu>
+	
+	<Property id='BodyShape'>
+		<Value id='0'>
+			<Adjective>neat hourglass</Adjective>
+		</Value>
+		<Value id='1'>
+			<Adjective>full hourglass</Adjective>
+		</Value>
+		<Value id='2'>
+			<Adjective>inverted triangle</Adjective>
+		</Value>
+		<Value id='3'>
+			<Adjective>lean column</Adjective>
+		</Value>
+		<Value id='4'>
+			<Adjective>rectangle</Adjective>
+		</Value>
+		<Value id='5'>
+			<Adjective>pear</Adjective>
+		</Value>
+		<Value id='6'>
+			<Adjective>apple</Adjective>
+		</Value>
+	</Property>
+	
+	<Property id='weight'>
+		<Value id='0'>
+			<Adjective>skinny</Adjective>
+		</Value>
+		<Value id='1'>
+			<Adjective>lean</Adjective>
+			<Adjective>slim</Adjective>
+		</Value>
+		<Value id='2'>
+			<Adjective>average</Adjective>
+		</Value>
+		<Value id='3'>
+			<Adjective>chubby</Adjective>
+		</Value>
+		<Value id='4'>
+			<Adjective>overweight</Adjective>
+		</Value>
+	</Property>
+	
+	<Property id='Height'>
+		<Value id='0'>
+			<Adjective>child-like</Adjective>
+		</Value>
+		<Value id='1'>
+			<Adjective>short</Adjective>
+		</Value>
+		<Value id='2'>
+			<Adjective>under average</Adjective>
+		</Value>
+		<Value id='3'>
+			<Adjective>average</Adjective>
+		</Value>
+		<Value id='4'>
+			<Adjective>above average</Adjective>
+		</Value>
+		<Value id='5'>
+			<Adjective>tall</Adjective>
+		</Value>
+	</Property>
+</Replacers>

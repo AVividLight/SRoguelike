@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+
+<Environments>
+	<Environment name='WaterDeep'>
+		<baseColourRed>0.072</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.130</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.402</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.000</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.050</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>1</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>100</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>0</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>0</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+	
+	<Environment name='WaterMain'>
+		<baseColourRed>0.066</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.198</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.740</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.050</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.150</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>10</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>100</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>0</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>0</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+	
+	<Environment name='WaterShallow'>
+		<baseColourRed>0.153</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.573</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.911</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.150</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.175</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>10</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>100</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>0</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>0</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+
+	<Environment name='WaterShore'>
+		<baseColourRed>0.332</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.617</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.914</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.175</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.205</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>10</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>100</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>0</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>0</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+
+	<Environment name='Rainforest'>
+		<baseColourRed>0.295</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.660</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.014</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.355</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.415</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>18</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>83</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>262</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>10</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+	
+	<Environment name='Grasslands'>
+		<baseColourRed>0.000</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.750</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.000</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.415</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.505</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>45</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>23</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>70</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>1</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+	
+	<Environment name='Steppe'>
+		<baseColourRed>1.788</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.706</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.358</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.505</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.655</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>45</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>23</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>70</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>1</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+	
+	<Environment name='Savanna'>
+		<baseColourRed>1.000</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.802</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.431</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.655</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.725</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>45</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>23</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>70</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>1</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+	
+	<Environment name='Desert'>
+		<baseColourRed>0.985</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.842</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.535</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.725</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.800</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>45</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>23</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>70</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>1</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+	
+	<Environment name='MountainBase'>
+		<baseColourRed>0.783</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.783</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.783</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.900</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.915</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>-28</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>90</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>1000</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>40</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+	
+	<Environment name='MountainMain'>
+		<baseColourRed>0.912</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.912</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.912</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.915</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>0.975</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>-28</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>90</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>1000</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>40</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+	
+	
+	<Environment name='MountainTop'>
+		<baseColourRed>0.990</baseColourRed> <!-- Float // Red Value in Base Colour -->
+		<baseColourGreen>0.990</baseColourGreen> <!-- Float // Green Value in Base Colour -->
+		<baseColourBlue>0.990</baseColourBlue> <!-- Float // Blue Value in Base Colour -->
+
+		<minElevation>0.975</minElevation> <!-- Float // Minimum Elevation this Environment can Exist in -->
+		<maxElevation>1.000</maxElevation> <!-- Float // Maximum Elevation this Environment can Exist in -->
+
+		<Climate>
+			<averageTemperature>-28</averageTemperature> <!-- Float // Centigrade -->
+			<averageHumidity>90</averageHumidity> <!-- Float // Percentage  -->
+			<averagePrecipitation>1000</averagePrecipitation> <!-- Float // Centimetres -->
+			<averageAtmosphericPressure>0</averageAtmosphericPressure> <!-- UNUSED IN CURRENT BUILD -->
+			<averateWind>40</averateWind> <!-- Float // Kilometres per Hour -->
+		</Climate>
+	</Environment>
+</Environments>
