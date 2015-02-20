@@ -152,13 +152,13 @@ public static class GetVariable
 					UnityEngine.Debug.Log ( match.ToString ().Substring ( 1, ( match.Length - 1 ) - 1 ));
 				}
 			}*/
-			
-			return Regex.Replace ( originalString, "{(.*?)}", m => Player.player.GetType ().GetProperty ( m.Groups[1].Value ).GetValue ( Player.player, null ).ToString ());
+		
+			//return Regex.Replace ( originalString, "{(.*?)}", m => Player.player.GetType ().GetProperty ( m.Groups[1].Value ).GetValue ( Player.player, null ).ToString ());
 			
 			//foos.Where(f => f.Contains("b")).Select(f => Regex.Replace(f, "b", "d"));
 			//return Replacers.replacers.Where ( d => d.Contains ( m => "{(.*?)}" ))
 			
-			//return Regex.Replace ( originalString, "{(.*?)}", d => Replacers.replacers.properties.Where ( p => p.id == d.Groups[1].Value ).FirstOrDefault ());
+			return Regex.Replace ( originalString, "{(.*?)}", d => Replacers.replacers.properties.Where ( p => p.id == d.Groups[1].Value ).FirstOrDefault ());
 			//return Regex.Replace ( originalString, "{(.*?)}", m => Replacers.replacers.properties.FindIndex ( m.Groups[1].Value ) );
 		} catch ( Exception e )
 		{
