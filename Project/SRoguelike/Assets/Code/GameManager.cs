@@ -99,7 +99,10 @@ public class Property : IEquatable <Property>
 	public string id;
 	
 	[XmlElement ( "Value" )]
-	public List<Value> propertyValue = new List<Value> ();
+	public List<Value> propertyValues = new List<Value> ();
+	
+	[XmlIgnore]
+	public sbyte propertyIndex;
 	
 	
 	public override String ToString()
@@ -117,7 +120,7 @@ public class Property : IEquatable <Property>
 			return false;
 		}
 		
-		return this.id == other.id && this.propertyValue == other.propertyValue;
+		return this.id == other.id && this.propertyValues == other.propertyValues;
 	}
 }
 
@@ -126,10 +129,24 @@ public class Value
 {
 	
 	[XmlAttribute ( "id" )]
-	public int id;
+	public string id;
 	
 	[XmlElement ( "Adjective" )]
 	public List<String> adjectives = new List<String> ();
+	
+	
+	public int ToInt ()
+	{
+		
+		sbyte valInt;
+		if ( sbyte.TryParse ( id, out valInt ))
+		{
+			
+			return valInt;
+		}
+		
+		return -128;
+	}
 }
 
 
@@ -142,29 +159,29 @@ public static class GetVariable
 		try
 		{
 			
-			/*MatchCollection allOccurrences = Regex.Matches ( originalString, "{(.*?)}" );
-			if ( allOccurrences.Count > 0 )
+			return Regex.Replace ( originalString, "{(.*?)}", match =>
 			{
 				
-				foreach ( Match match in allOccurrences )
-				{
+				string matchStr = match.ToString ();
+				string formattedMatch = matchStr.Substring ( 1, matchStr.Length - 2 );
+				var property = Player.player.properties.First ( p => p.id == formattedMatch );
 				
-					UnityEngine.Debug.Log ( match.ToString ().Substring ( 1, ( match.Length - 1 ) - 1 ));
-				}
-			}*/
-		
-			//return Regex.Replace ( originalString, "{(.*?)}", m => Player.player.GetType ().GetProperty ( m.Groups[1].Value ).GetValue ( Player.player, null ).ToString ());
-			
-			//foos.Where(f => f.Contains("b")).Select(f => Regex.Replace(f, "b", "d"));
-			//return Replacers.replacers.Where ( d => d.Contains ( m => "{(.*?)}" ))
-			
-			return Regex.Replace ( originalString, "{(.*?)}", d => Replacers.replacers.properties.Where ( p => p.id == d.Groups[1].Value ).FirstOrDefault ());
-			//return Regex.Replace ( originalString, "{(.*?)}", m => Replacers.replacers.properties.FindIndex ( m.Groups[1].Value ) );
+				return property.propertyValues[(sbyte) property.propertyIndex].adjectives[UnityEngine.Random.Range ( 0, property.propertyValues[property.propertyIndex].adjectives.Count () - 1 )];
+			});	
 		} catch ( Exception e )
 		{
-			
+		
 			UnityEngine.Debug.LogError ( e );
-			return "ERROR: Unable to find '" + Regex.Match ( originalString, "{(.*?)}" ) + "'";
+			
+			string errorString = "ERROR: Unable to every instance, ";
+			
+			foreach ( Match m in Regex.Matches ( originalString, "{(.*?)}" ))
+			{
+				
+				errorString += m.Value + " (" + m.Index + ")";
+			} 
+			
+			return errorString;
 		}
 	}
 }
@@ -173,30 +190,53 @@ public static class GetVariable
 public static class SetVariable
 {
 	
-	public static bool IntToPlayer ( string propertyName, int newValue )
+	public static bool ToPlayer ( string property, string val )
 	{
-		
-		PropertyInfo propertyInfo = Player.player.GetType ().GetProperty ( propertyName );
-		if ( propertyInfo != null )
+
+		if ( String.IsNullOrEmpty ( property.Trim ()) == false && String.IsNullOrEmpty ( val.Trim ()) == false )
 		{
-			
-			propertyInfo.SetValue ( Player.player, newValue, null );
+
+			Property replacerProperty = Replacers.replacers.properties.FirstOrDefault ( prop => prop.id == property );
+			if ( replacerProperty != null )
+			{
+
+				Property playerProperty = Player.player.properties.FirstOrDefault ( prop => prop.id == property );
+				if ( playerProperty != null )
+				{
+
+					sbyte valInt;
+					if ( sbyte.TryParse ( val, out valInt ))
+					{
+
+						playerProperty.propertyIndex = valInt;
+					} else
+					{
+
+						playerProperty.propertyValues[0].adjectives[0] = val;
+					}
+				} else
+				{
+					
+					sbyte valInt;
+					if ( sbyte.TryParse ( val, out valInt ))
+					{
+
+						replacerProperty.propertyIndex = valInt;
+					} else
+					{
+						
+						replacerProperty.propertyIndex = 0;
+						replacerProperty.propertyValues[0].adjectives[0] = val;
+					}
+					
+					Player.player.properties.Add ( replacerProperty );
+				}
+				
+				return true;
+			}
 		}
 		
-		return true;
-	}
-	
-	public static bool StringToPlayer ( string propertyName, string newValue )
-	{
-		
-		PropertyInfo propertyInfo = Player.player.GetType ().GetProperty ( propertyName );
-		if ( propertyInfo != null )
-		{
-			
-			propertyInfo.SetValue ( Player.player, newValue, null );
-		}
-		
-		return true;
+		return false;
 	}
 }
 
@@ -206,7 +246,6 @@ public class GameManager : MonoBehaviour
 	
 	internal Story story = new Story ();
 	private Replacers tempReplacers = new Replacers ();
-	//internal Replacers replacers = new Replacers ();
 
 	private WorldManager worldManager;
 	private UserInterface userInterface;

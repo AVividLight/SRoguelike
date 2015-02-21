@@ -330,7 +330,7 @@ public class UserInterface : MonoBehaviour
 		
 		GUILayout.Button ( "Force One Save", normalButton );
 		
-		GUILayout.Button ( "Developer Mode", violentButton );
+		GUILayout.Button ( "Developer Mode", sensualButton );
 		
 		GUILayout.EndScrollView ();
 		GUILayout.EndVertical ();
@@ -403,7 +403,7 @@ public class UserInterface : MonoBehaviour
 			if ( GUILayout.Button ( currentScene.interactions[interactionIndex].interactionMessage, normalButton ))
 			{
 			
-				SetVariable.IntToPlayer ( currentScene.interactions[interactionIndex].interactionAffect.affectProperty, currentScene.interactions[interactionIndex].interactionAffect.affectValue );
+				SetVariable.ToPlayer ( currentScene.interactions[interactionIndex].interactionAffect.affectProperty, currentScene.interactions[interactionIndex].interactionAffect.affectValue.ToString ());
 				MoveCharacterCreationScene ( characterCreationStep += 1 );
 			}
 		} else
@@ -450,8 +450,8 @@ public class UserInterface : MonoBehaviour
 			
 				textfieldTempValue = "Player";
 			}
-		
-			SetVariable.StringToPlayer ( "Name", textfieldTempValue );
+			
+			SetVariable.ToPlayer ( "Name", textfieldTempValue );
 			
 			MoveCharacterCreationScene ( characterCreationStep += 1 );
 			GUIUtility.keyboardControl = 0;

@@ -42,27 +42,28 @@ public class Player
 		}
 	}
 	
-	internal List<Element> elements = new List<Element> ();
+	internal List<Property> properties = new List<Property> ();
+	//internal List<Element> elements = new List<Element> ();
 }
 
 
-public class Element : IEquatable <Element>
+/*public class Element
 {
 	
-	public string id = "";
+	private string id;
+	public string ID { get; set; }
 	
-	public override String ToString()
+	private string val;
+	public string Val { get; set; }
+	
+	
+	public Element ( string _id, string _val )
 	{
 		
-		return id;
+		this.ID = _id;
+		this.Val = _val;
 	}
-
-	public bool Equals ( Element other )
-	{
-		
-		return this.id == other.id;
-	}
-}
+}*/
 
 
 public class PlayerManager : MonoBehaviour
