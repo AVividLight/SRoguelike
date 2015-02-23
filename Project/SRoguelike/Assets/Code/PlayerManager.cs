@@ -43,27 +43,7 @@ public class Player
 	}
 	
 	internal List<Property> properties = new List<Property> ();
-	//internal List<Element> elements = new List<Element> ();
 }
-
-
-/*public class Element
-{
-	
-	private string id;
-	public string ID { get; set; }
-	
-	private string val;
-	public string Val { get; set; }
-	
-	
-	public Element ( string _id, string _val )
-	{
-		
-		this.ID = _id;
-		this.Val = _val;
-	}
-}*/
 
 
 public class PlayerManager : MonoBehaviour

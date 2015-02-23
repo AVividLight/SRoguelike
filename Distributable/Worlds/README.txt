@@ -1,1 +1,1 @@
-Unzip and place on running user's Desktop.
+Unzip and place on active user's Desktop.

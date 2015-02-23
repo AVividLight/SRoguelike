@@ -173,7 +173,7 @@ public static class GetVariable
 		
 			UnityEngine.Debug.LogError ( e );
 			
-			string errorString = "ERROR: Unable to every instance, ";
+			string errorString = "Unable to find all instances, ";
 			
 			foreach ( Match m in Regex.Matches ( originalString, "{(.*?)}" ))
 			{
