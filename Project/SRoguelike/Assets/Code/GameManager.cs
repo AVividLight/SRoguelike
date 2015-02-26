@@ -61,7 +61,7 @@ public class Interaction
 	public string interactionType;
 	public string interactionMessage;
 	
-	public string interactionDestination;
+	public int interactionDestination;
 	public int interactionEndNextGUI;
 	
 	[XmlElement ( "InteractionAffect" )]
@@ -162,16 +162,13 @@ public static class GetVariable
 			return Regex.Replace ( originalString, "{(.*?)}", match =>
 			{
 				
-				string matchStr = match.ToString ();
-				string formattedMatch = matchStr.Substring ( 1, matchStr.Length - 2 );
+				string formattedMatch = match.ToString ().Substring ( 1, match.ToString ().Length - 2 );
 				var property = Player.player.properties.First ( p => p.id == formattedMatch );
 				
-				return property.propertyValues[(sbyte) property.propertyIndex].adjectives[UnityEngine.Random.Range ( 0, property.propertyValues[property.propertyIndex].adjectives.Count () - 1 )];
+				return property.propertyValues[(sbyte) property.propertyIndex].adjectives[UnityEngine.Random.Range ( 0, property.propertyValues[property.propertyIndex].adjectives.Count () - 0 )];
 			});	
 		} catch ( Exception e )
 		{
-		
-			UnityEngine.Debug.LogError ( e );
 			
 			string errorString = "Unable to find all instances, ";
 			
@@ -180,6 +177,8 @@ public static class GetVariable
 				
 				errorString += m.Value + " (" + m.Index + ")";
 			} 
+			
+			UnityEngine.Debug.LogError ( errorString + "\n" + e );
 			
 			return errorString;
 		}
@@ -196,11 +195,11 @@ public static class SetVariable
 		if ( String.IsNullOrEmpty ( property.Trim ()) == false && String.IsNullOrEmpty ( val.Trim ()) == false )
 		{
 
-			Property replacerProperty = Replacers.replacers.properties.FirstOrDefault ( prop => prop.id == property );
+			Property replacerProperty = Replacers.replacers.properties.SingleOrDefault ( prop => prop.id == property );
 			if ( replacerProperty != null )
 			{
 
-				Property playerProperty = Player.player.properties.FirstOrDefault ( prop => prop.id == property );
+				Property playerProperty = Player.player.properties.SingleOrDefault ( prop => prop.id == property );
 				if ( playerProperty != null )
 				{
 
@@ -216,7 +215,7 @@ public static class SetVariable
 					}
 				} else
 				{
-					
+
 					sbyte valInt;
 					if ( sbyte.TryParse ( val, out valInt ))
 					{
@@ -224,14 +223,14 @@ public static class SetVariable
 						replacerProperty.propertyIndex = valInt;
 					} else
 					{
-						
+
 						replacerProperty.propertyIndex = 0;
 						replacerProperty.propertyValues[0].adjectives[0] = val;
 					}
-					
+
 					Player.player.properties.Add ( replacerProperty );
 				}
-				
+
 				return true;
 			}
 		}
@@ -259,46 +258,25 @@ public class GameManager : MonoBehaviour
 	}
 	
 	
-	internal void NewGame ( bool skipIntro = false )
+	internal void NewGame ( bool skipIntro = true )
 	{
 		
 		if ( skipIntro == true )
 		{
 			
 			userInterface.currentGUI = 4;
-			StartGame ( 10, 10, 8, 8 );
+			StartGame ( 24, 16, 8, 8 );
 			return;
 		}
 		
-		string storyXML = Read.XMLFile ( "/Users/michaelbethke/Desktop/Default/Story.xml" );
+		string tempFolderLocation = System.Environment.GetFolderPath ( System.Environment.SpecialFolder.Desktop ) + Path.DirectorySeparatorChar + "Default" + Path.DirectorySeparatorChar;
+		
+		string storyXML = Read.XMLFile ( tempFolderLocation + "Story.xml" );
 		story = storyXML.DeserializeXml<Story> ();
 		
-		string replacersXML = Read.XMLFile ( System.Environment.GetFolderPath ( System.Environment.SpecialFolder.Desktop ) + Path.DirectorySeparatorChar + "Default" + Path.DirectorySeparatorChar + "Replacers.xml" );
+		string replacersXML = Read.XMLFile ( tempFolderLocation + "Replacers.xml" );
 		tempReplacers = replacersXML.DeserializeXml<Replacers> ();
 		Replacers.replacers = tempReplacers;
-		
-		/*foreach ( Property newProperty in replacers.properties )
-		{
-			
-			UnityEngine.Debug.Log ( newProperty.id );
-			
-			//Property newProperty = replacers.properties.Find ( x => ( x.id == "PhysicalGender" ));
-			if ( newProperty != null )
-			{
-				
-				foreach ( Value newValue in newProperty.propertyValue )
-				{
-					
-					UnityEngine.Debug.Log ( "\t" + newValue.id );
-					foreach ( String newAdjective in newValue.adjectives )
-					{
-						
-						UnityEngine.Debug.Log ( "\t\t" + newAdjective );
-					}
-				}
-			}
-		}*/
-		
 		
 		userInterface.StartIntro ();
 	}

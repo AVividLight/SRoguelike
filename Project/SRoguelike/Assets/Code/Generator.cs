@@ -5,23 +5,80 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 //Written by Michael Bethke
+public class TileObject
+{
+	
+	public string name;
+	public bool colliderEnabled;
+	
+	public Vector3 scale;
+	public Vector3 position;
+	
+	public GameObject parent;
+	
+	public Material material;
+	public Color colour;
+}
+
+
 public class Generator : MonoBehaviour
 {
 	
-	internal int currentLoadingPercentage = 0;
-	internal int totalLoadingPercentage = 0;
-
-	//private ExternalInformation externalInformation;
+	static internal string loadingInformation;
+	private int currentLoadingPercentage = 0;
+	private int totalLoadingPercentage = 0;
+	private bool loading = false;
 	
 	private Material selfIllumDiffuse;
+
+	private List<TileObject> tileGenerationQueue = new List<TileObject> ();
 	
 	
 	private void Start ()
 	{
 		
-		//externalInformation = GameObject.FindGameObjectWithTag ( "InformationManager" ).GetComponent<ExternalInformation> ();
-		
 		selfIllumDiffuse = new Material ( Shader.Find ( "Self-Illumin/Diffuse" )); 
+	}
+	
+	
+	private void Update ()
+	{
+		
+		if ( loading == true )
+		{
+			
+			int tilesPerFrame = 0;
+			while ( tilesPerFrame < 64 )
+			{
+		
+				if ( tileGenerationQueue.Any () == true )
+				{
+					
+					loadingInformation = "Loading tile " + currentLoadingPercentage + " of " + totalLoadingPercentage + ".";
+						
+					GameObject newTile = GameObject.CreatePrimitive ( PrimitiveType.Plane );
+					
+					newTile.name = tileGenerationQueue[0].name;
+					newTile.collider.enabled = tileGenerationQueue[0].colliderEnabled;
+				
+					newTile.transform.localScale = tileGenerationQueue[0].scale;
+					newTile.transform.localPosition = tileGenerationQueue[0].position;
+					newTile.transform.parent = tileGenerationQueue[0].parent.transform;
+				
+					newTile.renderer.material = tileGenerationQueue[0].material;
+					newTile.renderer.material.color = tileGenerationQueue[0].colour;
+					
+					tileGenerationQueue.RemoveAt ( 0 );
+					currentLoadingPercentage += 1;
+				} else {
+
+					loading = false;
+					loadingInformation = "";
+				}
+				
+				tilesPerFrame += 1;
+			}
+		}
 	}
 	
 	
@@ -30,6 +87,7 @@ public class Generator : MonoBehaviour
 		
 		currentLoadingPercentage = 0;
 		totalLoadingPercentage = ( worldWidth * regionWidth ) * ( worldHeight * regionHeight );
+		loading = true;
 			
 		World newWorld = new World ( worldWidth, worldHeight, regionWidth, regionHeight );
 		
@@ -52,7 +110,7 @@ public class Generator : MonoBehaviour
 		
 		Environments environments = new Environments ();
 		
-		string environmentsXML = /*externalInformation.ReadXMLFile*/ Read.XMLFile ( "/Users/michaelbethke/Desktop/Default/Environments.xml" );
+		string environmentsXML = Read.XMLFile ( "/Users/michaelbethke/Desktop/Default/Environments.xml" );
 		
 		environments = environmentsXML.DeserializeXml<Environments> ();
 		environments.minimumEnvironmentConditions = SetEnvironmentConditions ( environments );
@@ -134,17 +192,17 @@ public class Generator : MonoBehaviour
 		newRegionObject.collider.enabled = false;
 		
 		newRegionObject.transform.localScale = new Vector3 ( regionWidth * 0.1f, 1, regionHeight * 0.1f );
-		newRegionObject.transform.position = new Vector3 (( regionWidth * regionXIndex ) + regionWidth/2 - 0.5f /*Tile Width*/, 0, ( regionHeight * regionYIndex ) + regionHeight/2 - 0.5f /*Tile Height*/ );
+		newRegionObject.transform.position = new Vector3 (( regionWidth * regionXIndex ) + regionWidth/2 - 0.5f /* 0.5f = Tile Width/2 */, 0, ( regionHeight * regionYIndex ) + regionHeight/2 - 0.5f /* 0.5f = Tile Height/2 */ );
 		newRegionObject.transform.parent = newWorld.worldObject.transform;
 		
 		newRegion.regionObject = newRegionObject;
 		
-		//if ( regionXIndex == 4 && regionYIndex == 3 )
-		//{
+		if ( regionXIndex == Player.player.position.x && regionYIndex == Player.player.position.z )
+		{
 			
 			newRegion.tiles = CreateTiles ( newRegion, regionWidth, regionHeight, regionXIndex, regionYIndex );
 			newRegion.regionObject.GetComponent<MeshRenderer> ().enabled = false;
-		//}
+		}
 		
 		return newRegion;
 	}
@@ -184,19 +242,19 @@ public class Generator : MonoBehaviour
 		tile.region = newRegion;
 		tile.environment = GetTileEnvironment ( newRegion, tileXIndex, tileYIndex, regionWidth, regionHeight, regionXIndex, regionYIndex );
 		
-		GameObject newTileObject = GameObject.CreatePrimitive ( PrimitiveType.Plane );
-		
+		TileObject newTileObject = new TileObject ();
 		newTileObject.name = "Tile " + tileYIndex + ", " + tileXIndex;
-		newTileObject.collider.enabled = false;
+		newTileObject.colliderEnabled = false;
 		
-		newTileObject.transform.localScale = new Vector3 ( 0.1f, 1, 0.1f );
-		newTileObject.transform.localPosition = new Vector3 (( regionXIndex * regionWidth ) + tileXIndex, 0, ( regionYIndex * regionHeight ) + tileYIndex );
-		newTileObject.transform.parent = newRegion.regionObject.transform;
+		newTileObject.scale = new Vector3 ( 0.1f, 1, 0.1f );
+		newTileObject.position = new Vector3 (( regionXIndex * regionWidth ) + tileXIndex, 0, ( regionYIndex * regionHeight ) + tileYIndex );
+		newTileObject.parent = newRegion.regionObject;
 		
-		newTileObject.renderer.material = selfIllumDiffuse;
-		newTileObject.renderer.material.color = GetTileColour ( tile );
+		newTileObject.material = selfIllumDiffuse;
+		newTileObject.colour = GetTileColour ( tile );
 		
-		tile.tileObject = newTileObject;
+		tileGenerationQueue.Add ( newTileObject );
+		totalLoadingPercentage += 1;
 		
 		return tile;
 	}

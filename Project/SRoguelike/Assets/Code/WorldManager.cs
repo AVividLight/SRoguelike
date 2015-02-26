@@ -120,9 +120,7 @@ public class WorldManager : MonoBehaviour
 	
 	internal void CreateNewWorld ( int worldWidth, int worldHeight, int regionWidth, int regionHeight )
 	{
-		
-		
-		
+
 		float xSeed = UnityEngine.Random.Range ( 0.00f, 1.00f );
 		float ySeed = UnityEngine.Random.Range ( 0.00f, 1.00f );
 		

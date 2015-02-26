@@ -12,7 +12,8 @@ public class UserInterface : MonoBehaviour
 	
 	public Font classicFont;
 	public Font modernFont;
-	public Font[] playerWrittingFont;
+	public Font playerWritingFont;
+	//public Font[] playerWrittingFont;
 	
 	public Texture2D[] blueButtons = new Texture2D[6];
 	public Texture2D[] greyButtons = new Texture2D[3];
@@ -214,10 +215,10 @@ public class UserInterface : MonoBehaviour
 	}
 	
 	
-	/*private IEnumerator AutoText ( string originalMessage )
+	/*private IEnumerator AutoText ( string message )
 	{
 		
-		char[] charArray = originalMessage.ToCharArray ();
+		char[] charArray = message.ToCharArray ();
 		
 		int charIndex = 0;
 		while ( charIndex < charArray.Length )
@@ -256,6 +257,7 @@ public class UserInterface : MonoBehaviour
 			break;
 			
 			case 4:
+			GUILayout.Window ( 4, new Rect ( 0, 0, Screen.width, Screen.height ), GameWindow, "" );
 			break;
 			
 			default:
@@ -344,7 +346,7 @@ public class UserInterface : MonoBehaviour
 	internal void StartIntro ()
 	{
 		
-		Player.player.HandWriting = playerWrittingFont[UnityEngine.Random.Range ( 0, playerWrittingFont.Length )];
+		Player.player.HandWriting = playerWritingFont; //playerWrittingFont[UnityEngine.Random.Range ( 0, playerWrittingFont.Length )];
 		GenerateVariableGUIStyles ();
 		
 		currentScene = gameManager.story.introduction.scenes[0];
@@ -404,35 +406,30 @@ public class UserInterface : MonoBehaviour
 			{
 			
 				SetVariable.ToPlayer ( currentScene.interactions[interactionIndex].interactionAffect.affectProperty, currentScene.interactions[interactionIndex].interactionAffect.affectValue.ToString ());
-				MoveCharacterCreationScene ( characterCreationStep += 1 );
+				MoveCharacterCreationScene ( currentScene.interactions[interactionIndex].interactionDestination );
+				scrollPosition.y = Mathf.NegativeInfinity;
 			}
 		} else
 		{
 			
-			int destinationInt;
-			if ( int.TryParse ( currentScene.interactions[interactionIndex].interactionDestination, out destinationInt ))
+			if ( currentScene.interactions[interactionIndex].interactionDestination != -1 )
 			{
 				
 				if ( GUILayout.Button ( currentScene.interactions[interactionIndex].interactionMessage, normalButton ))
 				{
 			
 				
-					currentScene = gameManager.story.introduction.scenes[destinationInt];
+					currentScene = gameManager.story.introduction.scenes[currentScene.interactions[interactionIndex].interactionDestination];
 					scrollPosition.y = Mathf.NegativeInfinity;
 				}
-			} else
-			{
+			} else {
 				
-				if ( currentScene.interactions[interactionIndex].interactionDestination == "end" )
+				if ( GUILayout.Button ( currentScene.interactions[interactionIndex].interactionMessage, normalButton ))
 				{
 				
-					if ( GUILayout.Button ( currentScene.interactions[interactionIndex].interactionMessage, normalButton ))
-					{
-					
-						currentGUI = currentScene.interactions[interactionIndex].interactionEndNextGUI;
-					}
+					currentGUI = currentScene.interactions[interactionIndex].interactionEndNextGUI;
 				}
-			} 
+			}
 		}
 	}
 	
@@ -532,6 +529,7 @@ public class UserInterface : MonoBehaviour
 				if ( GUILayout.Button ( "Previous Step", violentButton ))
 				{
 		
+					scrollPosition.y = Mathf.NegativeInfinity;
 					MoveCharacterCreationScene ( characterCreationStep - 1 );
 				}
 			}
@@ -541,6 +539,25 @@ public class UserInterface : MonoBehaviour
 		GUILayout.EndVertical ();
 		GUILayout.FlexibleSpace ();
 		GUILayout.EndHorizontal ();
+		GUILayout.EndVertical ();
+	}
+	
+	
+	private void GameWindow ( int windowID )
+	{
+		
+		GUILayout.BeginVertical ();
+		GUILayout.FlexibleSpace ();
+		
+		GUILayout.BeginHorizontal ();
+		GUILayout.FlexibleSpace ();
+		
+		GUILayout.Label ( Generator.loadingInformation, labelCenterLargeStyle );
+		
+		GUILayout.FlexibleSpace ();
+		GUILayout.EndHorizontal ();
+		
+		GUILayout.FlexibleSpace ();
 		GUILayout.EndVertical ();
 	}
 }
