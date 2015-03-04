@@ -68,14 +68,14 @@ public class Generator : MonoBehaviour
 						GameObject newTile = GameObject.CreatePrimitive ( PrimitiveType.Plane );
 						
 						newTile.name = tileQueue[0].name;
-						newTile.collider.enabled = false; //tileQueue[0].colliderEnabled;
+						newTile.collider.enabled = false;
 					
-						newTile.transform.localScale = new Vector3 ( 0.1f, 1, 0.1f ); //tileQueue[0].scale;
-						newTile.transform.localPosition = new Vector3 ( tileQueue[0].position.x, 1, tileQueue[0].position.z ); //tileQueue[0].position;
+						newTile.transform.localScale = new Vector3 ( 0.1f, 1, 0.1f );
+						newTile.transform.localPosition = new Vector3 ( tileQueue[0].position.x, 1, tileQueue[0].position.z );
 						newTile.transform.parent = tileQueue[0].region.regionObject.transform;
 					
-						newTile.renderer.material = selfIllumDiffuse; //tileQueue[0].material;
-						newTile.renderer.material.color = Color.white; //tileQueue[0].colour;
+						newTile.renderer.material = selfIllumDiffuse;
+						newTile.renderer.material.color = Color.white;
 						
 						tileQueue[0].tileObject = newTile;
 						
@@ -196,7 +196,7 @@ public class Generator : MonoBehaviour
 		newWorldObject.name = "NewWorld";
 		newWorld.worldObject = newWorldObject;
 		
-		newWorld.worldPerlin = GeneratePerlinNoise ( xSeed, ySeed, worldWidth * regionWidth, worldHeight * regionHeight );
+		newWorld.worldPerlin = GeneratePerlinNoise ( xSeed, ySeed, regionWidth * worldWidth, regionHeight * worldHeight );
 		newWorld.environments = GetEnvironments ();
 		
 		newWorld.regions = CreateRegions ( newWorld );
@@ -365,8 +365,7 @@ public class Generator : MonoBehaviour
 	private Environment GetTileEnvironment ( Tile newTile )
 	{
 
-		float tilePerlin = GetTilePerlin ( newTile ).grayscale;
-		
+		float tilePerlin = GetTilePerlin ( newTile );
 		float higherElevation = 0;
 		float lowerElevation = 0;
 		
@@ -404,18 +403,16 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private Color GetTilePerlin ( Tile newTile )
+	private float GetTilePerlin ( Tile newTile )
 	{
 		
-		int xOffset = ( newTile.region.position.x * newTile.region.world.regionDimensions.x );
-		int yOffset = ( newTile.region.position.z * newTile.region.world.regionDimensions.z );
+		//int xOffset = ( newTile.region.position.x * newTile.region.world.regionDimensions.x );
+		//int yOffset = ( newTile.region.position.z * newTile.region.world.regionDimensions.z );
 		
-		UnityEngine.Debug.Log (( xOffset + newTile.position.x ) + " " + ( yOffset + newTile.position.z ));
-		
-		Color newPerlinValue = newTile.region.world.worldPerlin[xOffset + newTile.position.x, yOffset + newTile.position.z];
+		Color newPerlinValue = newTile.region.world.worldPerlin[/*xOffset +*/ newTile.position.x, /*yOffset +*/ newTile.position.z];
 		Color newColour = new Color ( newPerlinValue.grayscale, newPerlinValue.grayscale, newPerlinValue.grayscale, 1 );
 		
-		return newColour;
+		return newColour.grayscale;
 	}
 	
 	
