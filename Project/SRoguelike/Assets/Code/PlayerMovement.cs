@@ -5,13 +5,6 @@ public class PlayerMovement : MonoBehaviour
 {
 	
 	internal bool canMove = false;
-
-
-	private void Start ()
-	{
-	
-		
-	}
 	
 	
 	private void Update ()

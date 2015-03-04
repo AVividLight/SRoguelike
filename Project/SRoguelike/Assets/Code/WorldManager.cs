@@ -9,26 +9,22 @@ public class World
 {
 	
 	public GameObject worldObject;
+	public Int2D worldDimensions = new Int2D ();
+	
 	public Environments environments;
 	public Color[,] worldPerlin;
 	
-	public int worldWidth { get; set; }
-	public int worldHeight { get; set; }
-	
-	
 	public Region[,] regions;
-	
-	public int regionWidth { get; set; }
-	public int regionHeight { get; set; }
+	public Int2D regionDimensions = new Int2D ();
 	
 	public World ( int argWorldWidth, int argWorldHeight, int argRegionWidth, int argRegionHeight )
 	{
 		
-		this.worldWidth = argWorldWidth;
-		this.worldHeight = argWorldHeight;
+		this.worldDimensions.x = argWorldWidth;
+		this.worldDimensions.z = argWorldHeight;
 		
-		this.regionWidth = argRegionWidth;
-		this.regionHeight = argRegionHeight;
+		this.regionDimensions.x = argRegionWidth;
+		this.regionDimensions.z = argRegionHeight;
 	}
 }
 
@@ -37,6 +33,8 @@ public class Region
 {
 	
 	public World world;
+	public Int2D position;
+	
 	public GameObject regionObject;
 	
 	public Tile[,] tiles;
@@ -46,7 +44,10 @@ public class Region
 public class Tile
 {
 	
+	public string name;
+	
 	public Region region;
+	public Int2D position;
 	
 	public GameObject tileObject;
 	public bool walkable { get; set; }
@@ -96,6 +97,64 @@ public class Climate
 	public String averagePrecipitation;
 	public String averageAtmosphericPressure;
 	public String averageWind;
+}
+
+
+public class Int2D
+{
+	
+	private int xPosition = 0;
+	private int zPosition = 0;
+	
+	public int x
+	{
+		
+		get
+		{
+			
+			return xPosition;
+		}
+		
+		set
+		{
+			
+			xPosition = value;
+		}
+	}
+	
+	public int z
+	{
+		
+		get
+		{
+			
+			return zPosition;
+		}
+		
+		set
+		{
+			
+			zPosition = value;
+		}
+	}
+	
+	
+	public Int2D ( int pX = -1, int pZ = -1 )
+	{
+		
+		if ( pX > -1 )
+		{
+			
+			x = pX;
+		}
+		
+		if ( pZ > -1 )
+		{
+			
+			z = pZ;
+		}
+		
+	}
 }
 
 

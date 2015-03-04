@@ -265,7 +265,7 @@ public class GameManager : MonoBehaviour
 		{
 			
 			userInterface.currentGUI = 4;
-			StartGame ( 24, 16, 8, 8 );
+			StartGame ( 8, 6, 8, 8 );
 			return;
 		}
 		
