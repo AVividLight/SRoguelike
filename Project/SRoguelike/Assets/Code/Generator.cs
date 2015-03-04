@@ -5,35 +5,16 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 //Written by Michael Bethke
-/*public class TileObject
-{
-	
-	public string name;
-	public bool colliderEnabled;
-	
-	public Vector3 scale;
-	public Vector3 position;
-	
-	public GameObject parent;
-	
-	public Material material;
-	public Color colour;
-}*/
-
-
 public class Generator : MonoBehaviour
 {
 	
 	private WorldManager worldManager;
 	
 	static internal string loadingInformation;
-	//private int currentLoadingPercentage = 0;
-	//private int totalLoadingPercentage = 0;
 	private sbyte loadingStage = -1;
 	
 	private Material selfIllumDiffuse;
 
-	//private List<TileObject> tileQueue = new List<TileObject> ();
 	private List<Tile> tileQueue = new List<Tile> ();
 	
 	
@@ -61,8 +42,7 @@ public class Generator : MonoBehaviour
 			
 					if ( tileQueue.Any () == true )
 					{
-						
-						//loadingInformation = "Loading tile " + currentLoadingPercentage + " of " + totalLoadingPercentage + ".";
+
 						loadingInformation = "Creating " + ( tileQueue.Count () - 1 ) + " tile objects.";
 							
 						GameObject newTile = GameObject.CreatePrimitive ( PrimitiveType.Plane );
@@ -80,14 +60,10 @@ public class Generator : MonoBehaviour
 						tileQueue[0].tileObject = newTile;
 						
 						tileQueue.RemoveAt ( 0 );
-						//currentLoadingPercentage += 1;
 					} else {
 							
 						RebuildTileQueue ();
 						loadingStage = 1;
-						
-						//currentLoadingPercentage = 0;
-						//totalLoadingPercentage = 0;
 						break;
 					}
 					
@@ -113,33 +89,6 @@ public class Generator : MonoBehaviour
 					
 					tileEnvironmentsPerFrame += 1;
 				}
-				
-				/*int regionEnvironmentsPerFrame = 0;
-				int tileEnvironmentsPerFrame = 0;
-				
-				int regionYIndex = 0;
-				while ( regionYIndex < worldManager.world.worldDimensions.z )
-				{
-			
-					int regionXIndex = 0;
-					while ( regionXIndex < worldManager.world.worldDimensions.x )
-					{
-				
-						loadingInformation = "Finding environment for " + ( worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z ) + " tiles.";
-						regionXIndex += 1;
-					}
-			
-					regionYIndex += 1;
-				}
-				
-				regionEnvironmentsPerFrame += 1;
-				
-				if ( regionEnvironmentsPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
-				{
-					
-					loadingStage = -1;
-					//loadingInformation = "";
-				}*/
 				break;
 				
 				default:
@@ -177,17 +126,11 @@ public class Generator : MonoBehaviour
 			}
 			regionYIndex += 1;
 		}
-		
-		//currentLoadingPercentage = 0;
-		//totalLoadingPercentage = 0;
 	}
 	
 	
 	public World GenerateWorld ( float xSeed, float ySeed, int worldWidth, int worldHeight, int regionWidth, int regionHeight )
 	{
-		
-		//currentLoadingPercentage = 0;
-		//totalLoadingPercentage = ( worldWidth * regionWidth ) * ( worldHeight * regionHeight );
 			
 		World newWorld = new World ( worldWidth, worldHeight, regionWidth, regionHeight );
 		
@@ -324,8 +267,6 @@ public class Generator : MonoBehaviour
 				
 				newTiles[tileXIndex, tileYIndex] = GenerateTile ( newRegion, tileXIndex, tileYIndex );
 				tileXIndex += 1;
-				
-				//currentLoadingPercentage += 1;
 			}
 			
 			tileYIndex += 1;
@@ -356,8 +297,6 @@ public class Generator : MonoBehaviour
 		//newTileObject.colour = Color.white; //GetTileColour ( tile );
 		
 		tileQueue.Add ( tile );
-		//totalLoadingPercentage += 1;
-		
 		return tile;
 	}
 	
@@ -409,10 +348,9 @@ public class Generator : MonoBehaviour
 		//int xOffset = ( newTile.region.position.x * newTile.region.world.regionDimensions.x );
 		//int yOffset = ( newTile.region.position.z * newTile.region.world.regionDimensions.z );
 		
-		Color newPerlinValue = newTile.region.world.worldPerlin[/*xOffset +*/ newTile.position.x, /*yOffset +*/ newTile.position.z];
-		Color newColour = new Color ( newPerlinValue.grayscale, newPerlinValue.grayscale, newPerlinValue.grayscale, 1 );
+		float newPerlinValue = newTile.region.world.worldPerlin[/*xOffset +*/ newTile.position.x, /*yOffset +*/ newTile.position.z];
 		
-		return newColour.grayscale;
+		return newPerlinValue;
 	}
 	
 	
@@ -427,10 +365,10 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private Color[,] GeneratePerlinNoise ( float xSeed, float ySeed, int perlinWidth, int perlinHeight )
+	private float[,] GeneratePerlinNoise ( float xSeed, float ySeed, int perlinWidth, int perlinHeight )
 	{
 		
-		Color[,] pixels = new Color [ perlinWidth, perlinHeight ];
+		float[,] pixels = new float [ perlinWidth, perlinHeight ];
 		
 		float scale = 3.0f;
 
@@ -444,9 +382,9 @@ public class Generator : MonoBehaviour
 				
 		    	float xCoordinate = xSeed + x / perlinWidth * scale;
 		    	float yCoordinate = ySeed + y / perlinHeight * scale;
-		    	float sample = Mathf.PerlinNoise ( xCoordinate, yCoordinate );
+		    	float perlin = Mathf.PerlinNoise ( xCoordinate, yCoordinate );
 				
-				pixels [Convert.ToInt32 ( x ), Convert.ToInt32 ( y )] = new Color ( sample, sample, sample, 1 );
+				pixels [Convert.ToInt32 ( x ), Convert.ToInt32 ( y )] = perlin;
 				
 				x += 1;
 			}
@@ -454,7 +392,7 @@ public class Generator : MonoBehaviour
 			y += 1;
 		}
 		
-		//Currently only works for squares
+		//Only works for squares
 		bool createTextureObject = false;
 		if ( createTextureObject == true )
 			CreatePerlinObject ( pixels );
@@ -463,7 +401,7 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private void CreatePerlinObject ( Color[,] twoDPixels )
+	private void CreatePerlinObject ( float[,] twoDPixels )
 	{
 		
 		Color[] texturePixelArray = new Color[twoDPixels.GetLength ( 0 ) * twoDPixels.GetLength ( 1 )];
@@ -476,7 +414,7 @@ public class Generator : MonoBehaviour
 			while ( pixelX < twoDPixels.GetLength ( 0 ))
 			{
 				
-				texturePixelArray [pixelY * twoDPixels.GetLength ( 1 ) + pixelX] = twoDPixels[pixelX, pixelY];
+				texturePixelArray [pixelY * twoDPixels.GetLength ( 1 ) + pixelX] = new Color ( twoDPixels[pixelX, pixelY], twoDPixels[pixelX, pixelY], twoDPixels[pixelX, pixelY], 1 );
 				pixelX += 1;
 			}
 				

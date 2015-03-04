@@ -12,7 +12,7 @@ public class World
 	public Int2D worldDimensions = new Int2D ();
 	
 	public Environments environments;
-	public Color[,] worldPerlin;
+	public float[,] worldPerlin;
 	
 	public Region[,] regions;
 	public Int2D regionDimensions = new Int2D ();

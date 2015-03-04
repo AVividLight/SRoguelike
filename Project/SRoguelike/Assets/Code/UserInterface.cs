@@ -310,12 +310,15 @@ public class UserInterface : MonoBehaviour
 		scrollPosition = GUILayout.BeginScrollView ( scrollPosition, false, true, GUILayout.Width ( 800 ), GUILayout.Height ( 400 ));
 		
 		GUILayout.Label ( "OPTIONS WINDOW", labelLeftLargeStyle );
-		if ( GUILayout.Button ( "Back", normalButton ))
+		if ( GUILayout.Button ( "Back", violentButton ))
 		{
 			
 			currentGUI = 0;
 		}
 		GUILayout.BeginHorizontal ();
+		GUILayout.BeginVertical ();
+		
+		GUILayout.Label ( "Text Style", labelLeftMediumStyle );
 		if ( GUILayout.Button ( "Modern Style", modernButton ))
 		{
 			
@@ -327,8 +330,19 @@ public class UserInterface : MonoBehaviour
 
 			GenerateStandardGUIStyles ( classicFont );
 		}
+		
+		GUILayout.EndVertical ();
 		GUILayout.FlexibleSpace ();
+		GUILayout.BeginVertical ();
+		
+		GUILayout.Label ( "Language", labelLeftMediumStyle );
+		GUILayout.Button ( "English", normalButton );
+		GUILayout.Button ( "Nederlands", normalButton );
+		GUILayout.Button ( "日本語", normalButton );
+		
+		GUILayout.EndVertical ();
 		GUILayout.EndHorizontal ();
+		GUILayout.Space ( 10 );
 		
 		GUILayout.Button ( "Force One Save", normalButton );
 		
