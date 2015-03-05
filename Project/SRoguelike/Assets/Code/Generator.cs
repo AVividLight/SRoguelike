@@ -45,24 +45,16 @@ public class Generator : MonoBehaviour
 
 						loadingInformation = "Creating " + ( tileQueue.Count () - 1 ) + " tile objects.";
 							
-						GameObject newTile = GameObject.CreatePrimitive ( PrimitiveType.Plane );
-						
-						newTile.name = tileQueue[0].name;
-						newTile.collider.enabled = false;
-					
-						newTile.transform.localScale = new Vector3 ( 0.1f, 1, 0.1f );
-						newTile.transform.localPosition = new Vector3 ( tileQueue[0].position.x, 1, tileQueue[0].position.z );
-						newTile.transform.parent = tileQueue[0].region.regionObject.transform;
-					
-						newTile.renderer.material = selfIllumDiffuse;
-						newTile.renderer.material.color = Color.white;
-						
-						tileQueue[0].tileObject = newTile;
+						if ( CreateTileObject ( tileQueue[0] ) != 0 )
+						{
+							
+							UnityEngine.Debug.Log ( "Unable to create tile object, " + tileQueue[0].name );
+						}
 						
 						tileQueue.RemoveAt ( 0 );
 					} else {
 							
-						RebuildTileQueue ();
+						RepopulateTileQueue ();
 						loadingStage = 1;
 						break;
 					}
@@ -79,15 +71,46 @@ public class Generator : MonoBehaviour
 					if ( tileQueue.Any () == true )
 					{
 						
-						loadingInformation = "Creating Environments for " + ( tileQueue.Count () - 1 ) + " tiles.";
+						loadingInformation = "Generating base environments on " + ( tileQueue.Count () - 1 ) + " tiles.";
 						
-						tileQueue[0].environment = GetTileEnvironment ( tileQueue[0] );
-						tileQueue[0].tileObject.renderer.material.color = GetTileColour ( tileQueue[0] );
+						if ( CreateEnvironment ( tileQueue[0] ) != 0 )
+						{
+							
+							UnityEngine.Debug.Log ( "Unable to create environment, " + tileQueue[0].name );
+						}
+						
+						tileQueue.RemoveAt ( 0 );
+					} else {
+							
+						RepopulateTileQueue ();
+						loadingStage = 2;
+						break;
+					}
+					
+					tileEnvironmentsPerFrame += 1;
+				}
+				break;
+				
+				case 2:
+				int tileShoresPerFrame = 0;
+				while ( tileShoresPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
+				{
+			
+					if ( tileQueue.Any () == true )
+					{
+						
+						loadingInformation = "Looking for shores on " + ( tileQueue.Count () - 1 ) + " tiles.";
+						
+						if ( CreateShore ( tileQueue[0] ) != 0 )
+						{
+							
+							UnityEngine.Debug.Log ( "Unable to create shore, " + tileQueue[0].name );
+						}
 						
 						tileQueue.RemoveAt ( 0 );
 					}
 					
-					tileEnvironmentsPerFrame += 1;
+					tileShoresPerFrame += 1;
 				}
 				break;
 				
@@ -98,7 +121,7 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private void RebuildTileQueue ()
+	private void RepopulateTileQueue ()
 	{
 		
 		int regionYIndex = 0;
@@ -126,6 +149,44 @@ public class Generator : MonoBehaviour
 			}
 			regionYIndex += 1;
 		}
+	}
+	
+	
+	private int CreateTileObject ( Tile tile )
+	{
+		
+		GameObject newTile = GameObject.CreatePrimitive ( PrimitiveType.Plane );
+		
+		newTile.name = tile.name;
+		newTile.collider.enabled = false;
+	
+		newTile.transform.localScale = new Vector3 ( 0.1f, 1, 0.1f );
+		newTile.transform.localPosition = new Vector3 ( tile.position.x, 1, tile.position.z );
+		newTile.transform.parent = tile.region.regionObject.transform;
+	
+		newTile.renderer.material = selfIllumDiffuse;
+		newTile.renderer.material.color = Color.white;
+		
+		tile.tileObject = newTile;
+		
+		return 0;
+	}
+	
+	
+	private int CreateEnvironment ( Tile tile )
+	{
+		
+		tile.environment = GetTileEnvironment ( tile );
+		tile.tileObject.renderer.material.color = GetTileColour ( tile );
+		
+		return 0;
+	}
+	
+	
+	private int CreateShore ( Tile tile )
+	{
+
+		return 0;
 	}
 	
 	
@@ -280,21 +341,11 @@ public class Generator : MonoBehaviour
 	{
 		
 		Tile tile = new Tile ();
+		tile.name = "Tile " + tileYIndex + ", " + tileXIndex;
 		
 		tile.region = newRegion;
 		tile.position = new Int2D ( tileXIndex, tileYIndex );
-		//tile.environment = GetTileEnvironment ( newRegion, tileXIndex, tileYIndex, regionWidth, regionHeight, regionXIndex, regionYIndex );
-		
-		//Tile newTileObject = new Tile ();
-		tile.name = "Tile " + tileYIndex + ", " + tileXIndex;
-		//newTileObject.colliderEnabled = false;
-		
-		//newTileObject.scale = new Vector3 ( 0.1f, 1, 0.1f );
 		tile.position = new Int2D (( newRegion.position.x * newRegion.world.regionDimensions.x ) + tileXIndex, ( newRegion.position.z * newRegion.world.regionDimensions.z ) + tileYIndex );
-		//newTileObject.parent = newRegion.regionObject;
-		
-		//newTileObject.material = selfIllumDiffuse;
-		//newTileObject.colour = Color.white; //GetTileColour ( tile );
 		
 		tileQueue.Add ( tile );
 		return tile;
@@ -370,7 +421,7 @@ public class Generator : MonoBehaviour
 		
 		float[,] pixels = new float [ perlinWidth, perlinHeight ];
 		
-		float scale = 3.0f;
+		float scale = 1.0f;
 
 		float y = 0;
 		while ( y < perlinHeight )

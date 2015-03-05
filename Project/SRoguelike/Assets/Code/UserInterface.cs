@@ -68,7 +68,7 @@ public class UserInterface : MonoBehaviour
 		
 		inactiveButton = new GUIStyle ();
 		inactiveButton.font = mainFont;
-		inactiveButton.fontSize = 16;
+		inactiveButton.fontSize = 24;
 		inactiveButton.normal.background = greyButtons[0];
 		inactiveButton.alignment = TextAnchor.MiddleCenter;
 		inactiveButton.border = new RectOffset ( 6, 6, 6, 6 );
@@ -77,7 +77,7 @@ public class UserInterface : MonoBehaviour
 		
 		normalButton = new GUIStyle ();
 		normalButton.font = mainFont;
-		normalButton.fontSize = 16;
+		normalButton.fontSize = 24;
 		normalButton.normal.background = blueButtons[2];
 		normalButton.hover.background = blueButtons[1];
 		normalButton.active.background = blueButtons[0];
@@ -88,7 +88,7 @@ public class UserInterface : MonoBehaviour
 		
 		violentButton = new GUIStyle ();
 		violentButton.font = mainFont;
-		violentButton.fontSize = 16;
+		violentButton.fontSize = 24;
 		violentButton.normal.background = redButtons[2];
 		violentButton.hover.background = redButtons[1];
 		violentButton.active.background = redButtons[0];
@@ -99,7 +99,7 @@ public class UserInterface : MonoBehaviour
 		
 		sensualButton = new GUIStyle ();
 		sensualButton.font = mainFont;
-		sensualButton.fontSize = 16;
+		sensualButton.fontSize = 24;
 		sensualButton.normal.background = purpleButtons[2];
 		sensualButton.hover.background = purpleButtons[1];
 		sensualButton.active.background = purpleButtons[0];
@@ -296,6 +296,8 @@ public class UserInterface : MonoBehaviour
 		GUILayout.EndVertical ();
 		GUILayout.FlexibleSpace ();
 		GUILayout.EndHorizontal ();
+		
+		GUI.Label ( new Rect ( 5, Screen.height - 45, Screen.width - 10, 40 ), "Development Build 15030401", labelLeftLargeStyle );
 	}
 	
 	
@@ -338,7 +340,7 @@ public class UserInterface : MonoBehaviour
 		GUILayout.Label ( "Language", labelLeftMediumStyle );
 		GUILayout.Button ( "English", normalButton );
 		GUILayout.Button ( "Nederlands", normalButton );
-		GUILayout.Button ( "日本語", normalButton );
+		//GUILayout.Button ( "日本語", normalButton );
 		
 		GUILayout.EndVertical ();
 		GUILayout.EndHorizontal ();
