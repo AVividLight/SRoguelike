@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 //Written by Michael Bethke
@@ -37,7 +38,8 @@ public class Generator : MonoBehaviour
 				
 				case 0:
 				int newTilesPerFrame = 0;
-				while ( newTilesPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
+				//while ( newTilesPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
+				while ( newTilesPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z )
 				{
 			
 					if ( tileQueue.Any () == true )
@@ -64,16 +66,17 @@ public class Generator : MonoBehaviour
 				break;
 				
 				case 1:
-				int tileEnvironmentsPerFrame = 0;
-				while ( tileEnvironmentsPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
+				int tileWaterPerFrame = 0;
+				//while ( tileWaterPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
+				while ( tileWaterPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z )
 				{
 			
 					if ( tileQueue.Any () == true )
 					{
 						
-						loadingInformation = "Generating base environments on " + ( tileQueue.Count () - 1 ) + " tiles.";
+						loadingInformation = "Looking for water on " + ( tileQueue.Count () - 1 ) + " tiles.";
 						
-						if ( CreateEnvironment ( tileQueue[0] ) != 0 )
+						if ( CreateWater ( tileQueue[0] ) != 0 )
 						{
 							
 							UnityEngine.Debug.Log ( "Unable to create environment, " + tileQueue[0].name );
@@ -87,19 +90,20 @@ public class Generator : MonoBehaviour
 						break;
 					}
 					
-					tileEnvironmentsPerFrame += 1;
+					tileWaterPerFrame += 1;
 				}
 				break;
 				
 				case 2:
 				int tileShoresPerFrame = 0;
-				while ( tileShoresPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
+				//while ( tileShoresPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
+				while ( tileShoresPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z )
 				{
 			
 					if ( tileQueue.Any () == true )
 					{
 						
-						loadingInformation = "Looking for shores on " + ( tileQueue.Count () - 1 ) + " tiles.";
+						loadingInformation = "Looking for shore on " + ( tileQueue.Count () - 1 ) + " tiles.";
 						
 						if ( CreateShore ( tileQueue[0] ) != 0 )
 						{
@@ -173,20 +177,51 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private int CreateEnvironment ( Tile tile )
+	private int CreateWater ( Tile tile )
 	{
 		
-		tile.environment = GetTileEnvironment ( tile );
-		tile.tileObject.renderer.material.color = GetTileColour ( tile );
+		Environment water;
+		if ( worldManager.world.environments.environmentList.TryGetValue ( "Water", out water ))
+		{
 		
-		return 0;
+			if ( GetTilePerlin ( tile ) < worldManager.world.environments.meta.seaLevel )
+			{
+				
+				SetTileEnvironment ( tile, water );
+			}
+
+			return 0;
+		}
+		
+		UnityEngine.Debug.Log ( "Unable to find environment 'Water'!" );
+		return 1;
 	}
 	
 	
 	private int CreateShore ( Tile tile )
 	{
 
-		return 0;
+		Environment shore;
+		if ( worldManager.world.environments.environmentList.TryGetValue ( "Shore", out shore ))
+		{
+		
+			UnityEngine.Debug.Log ( tile.position.AsString ());
+			//if ( tile.position.x  )
+
+			return 0;
+		}
+		
+		UnityEngine.Debug.Log ( "Unable to find environment 'Water'!" );
+		return 1;
+	}
+	
+	
+	private void SetTileEnvironment ( Tile tile, Environment environment )
+	{
+		
+		tile.environment = environment;
+		tile.tileObject.renderer.material.color = GetTileColour ( tile );
+		//tile.tileObject.renderer.material.color = Color.green;
 	}
 	
 	
@@ -214,27 +249,23 @@ public class Generator : MonoBehaviour
 	private Environments GetEnvironments ()
 	{
 		
-		Environments environments = new Environments ();
+		//Catch errors
+		Environments environments = JsonConvert.DeserializeObject<Environments>( File.ReadAllText ( System.Environment.GetFolderPath ( System.Environment.SpecialFolder.Desktop ) + Path.DirectorySeparatorChar + "Default" + Path.DirectorySeparatorChar + "Environments.json" ));
 		
-		string environmentsXML = Read.XMLFile ( "/Users/michaelbethke/Desktop/Default/Environments.xml" ); //Environment.GetFolderPath ( Environment.SpecialFolder.Desktop ) + Path.DirectorySeparatorChar + "Default" + Path.DirectorySeparatorChar + "Environments.xml"
-		
-		environments = environmentsXML.DeserializeXml<Environments> ();
-		environments.minimumEnvironmentConditions = SetEnvironmentConditions ( environments );
-		
-		int environmentIndex = 0;
-		while ( environmentIndex < environments.allEnvironments.Count ())
+		/*Environment output;
+		if ( environments.environmentList.TryGetValue ( "Water", out output ))
 		{
 			
-			//Catch errors in parsing
-			environments.allEnvironments[environmentIndex].baseColour = new Color ( Convert.ToSingle ( environments.allEnvironments[environmentIndex].baseColourRed ), Convert.ToSingle ( environments.allEnvironments[environmentIndex].baseColourGreen ), Convert.ToSingle ( environments.allEnvironments[environmentIndex].baseColourBlue ), 1 );
-			environmentIndex += 1;
+			//UnityEngine.Debug.Log ( output );
 		}
+		
+		UnityEngine.Debug.Log ( output.name );*/
 		
 		return environments;
 	}
 	
 	
-	private SortedDictionary <float, Environment> SetEnvironmentConditions ( Environments allEnvironments )
+	/*private SortedDictionary <float, Environment> SetEnvironmentConditions ( Environments allEnvironments )
 	{
 		
 		SortedDictionary <float, Environment> minimumEnvironmentConditions = new SortedDictionary <float, Environment> ();
@@ -257,7 +288,7 @@ public class Generator : MonoBehaviour
 		}
 		
 		return minimumEnvironmentConditions;
-	}
+	}*/
 	
 	
 	private Region[,] CreateRegions ( World newWorld )
@@ -352,7 +383,7 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private Environment GetTileEnvironment ( Tile newTile )
+	/*private Environment GetTileEnvironment ( Tile newTile )
 	{
 
 		float tilePerlin = GetTilePerlin ( newTile );
@@ -390,7 +421,7 @@ public class Generator : MonoBehaviour
 			
 			return higherEnvironment;
 		}
-	}
+	}*/
 	
 	
 	private float GetTilePerlin ( Tile newTile )
@@ -409,8 +440,7 @@ public class Generator : MonoBehaviour
 	{
 		
 		float minorVariation = UnityEngine.Random.Range ( 0.000f, 0.020f ) - 0.010f;
-		
-		Color baseColour = new Color ( tile.environment.baseColour.r + minorVariation, tile.environment.baseColour.g + minorVariation, tile.environment.baseColour.b + minorVariation, 1 );
+		Color baseColour = new Color ( tile.environment.baseColourRed + minorVariation, tile.environment.baseColourGreen + minorVariation, tile.environment.baseColourBlue + minorVariation, 1 );
 		
 		return baseColour;
 	}

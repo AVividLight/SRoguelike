@@ -1,6 +1,7 @@
 using System;
 using System.Xml;
 using UnityEngine;
+using Newtonsoft.Json;
 using System.Collections;
 using System.Xml.Serialization;
 using System.Collections.Generic;
@@ -60,43 +61,58 @@ public class Tile
 public class Environments
 {
 	
-	[XmlElement ( "Environment" )]
-	public List<Environment> allEnvironments = new List<Environment> ();
+	//[XmlElement ( "Meta" )]
+	public EnvironmentsMeta meta = new EnvironmentsMeta ();
 	
-	[XmlIgnore]
-	public SortedDictionary <float, Environment> minimumEnvironmentConditions;
+	//[XmlElement ( "Environment" )]
+	//public List<Environment> allEnvironments = new List<Environment> ();
+	
+	//[XmlIgnore]
+	//public SortedDictionary <float, Environment> minimumEnvironmentConditions;
+	
+	public Dictionary <string, Environment> environmentList = new Dictionary <string, Environment> ();
+}
+
+
+public class EnvironmentsMeta
+{
+	
+	[XmlElement]
+	public float seaLevel;
 }
 
 
 public class Environment
 {
 	
-	[XmlAttribute]
 	public String name;
+
+	public float baseColourRed;
+	public float baseColourGreen;
+	public float baseColourBlue;
 	
-	[XmlElement]
-	public String baseColourRed;
-	public String baseColourGreen;
-	public String baseColourBlue;
+	public Walkable walkable = new Walkable ();
 	
-	public String minElevation;
-	public String maxElevation;
+	public Climate climate = new Climate ();
+}
+
+
+public class Walkable
+{
 	
-	public Climate climate;
-	
-	[XmlIgnore]
-	public Color baseColour;
+	public bool foot = false;
+	public bool boat = false;
 }
 
 
 public class Climate
 {
 	
-	public String averageTemperature;
-	public String averageHumidity;
-	public String averagePrecipitation;
-	public String averageAtmosphericPressure;
-	public String averageWind;
+	public float averageTemperature = 0;
+	public float averageHumidity = 0;
+	public float averagePrecipitation = 0;
+	public float averageAtmosphericPressure = 0;
+	public float averageWind = 0;
 }
 
 
@@ -155,6 +171,13 @@ public class Int2D
 		}
 		
 	}
+	
+	
+	public string AsString ()
+	{
+		
+		return "X: " + x + " Z: " + z;
+	}
 }
 
 
@@ -164,16 +187,12 @@ public class WorldManager : MonoBehaviour
 	public World world;
 	
 	private Generator generator;
-	
-	//public Color testColour;
 
 
 	private void Start ()
 	{
 	
 		generator = gameObject.GetComponent<Generator> ();
-		
-		//UnityEngine.Debug.Log ( testColour );
 	}
 	
 	
