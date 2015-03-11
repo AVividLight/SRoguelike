@@ -38,8 +38,7 @@ public class Generator : MonoBehaviour
 				
 				case 0:
 				int newTilesPerFrame = 0;
-				//while ( newTilesPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
-				while ( newTilesPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z )
+				while ( newTilesPerFrame < ( worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z ) * 1 )
 				{
 			
 					if ( tileQueue.Any () == true )
@@ -67,7 +66,6 @@ public class Generator : MonoBehaviour
 				
 				case 1:
 				int tileWaterPerFrame = 0;
-				//while ( tileWaterPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
 				while ( tileWaterPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z )
 				{
 			
@@ -96,7 +94,6 @@ public class Generator : MonoBehaviour
 				
 				case 2:
 				int tileShoresPerFrame = 0;
-				//while ( tileShoresPerFrame < worldManager.world.worldDimensions.x * worldManager.world.worldDimensions.z )
 				while ( tileShoresPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z )
 				{
 			
@@ -202,12 +199,31 @@ public class Generator : MonoBehaviour
 	{
 
 		Environment shore;
-		if ( worldManager.world.environments.environmentList.TryGetValue ( "Shore", out shore ))
+		if ( tile.region.world.environments.environmentList.TryGetValue ( "Shore", out shore ))
 		{
 		
-			UnityEngine.Debug.Log ( tile.position.AsString ());
-			//if ( tile.position.x  )
+			//UnityEngine.Debug.Log ( tile.position.AsString ());
+			if ( tile.position.x > 0 )
+			{
+				
+				UnityEngine.Debug.Log ( worldManager.world.tiles [tile.position.x, tile.position.z].name );
+				/*if ( tile.region.world.tiles [tile.position.x - 1, tile.position.z].name == "Water" )
+				{
+					
+					//tile.region.world.tiles [tile.position.x - 1, tile.position.z].tileObject.renderer.material.color = Color.yellow;
+				}*/
+			}
+				
+			if ( tile.position.z > 0 )
+			{}
+			
+			if ( tile.position.x < tile.region.world.regionDimensions.x )
+			{}
+				
+			if ( tile.position.z < tile.region.world.regionDimensions.z )
+			{}
 
+			
 			return 0;
 		}
 		
@@ -229,6 +245,7 @@ public class Generator : MonoBehaviour
 	{
 			
 		World newWorld = new World ( worldWidth, worldHeight, regionWidth, regionHeight );
+		newWorld.tiles = new Tile[worldWidth * regionWidth, worldHeight * regionHeight];
 		
 		GameObject newWorldObject = new GameObject ();
 		newWorldObject.transform.parent = gameObject.transform;
@@ -252,43 +269,8 @@ public class Generator : MonoBehaviour
 		//Catch errors
 		Environments environments = JsonConvert.DeserializeObject<Environments>( File.ReadAllText ( System.Environment.GetFolderPath ( System.Environment.SpecialFolder.Desktop ) + Path.DirectorySeparatorChar + "Default" + Path.DirectorySeparatorChar + "Environments.json" ));
 		
-		/*Environment output;
-		if ( environments.environmentList.TryGetValue ( "Water", out output ))
-		{
-			
-			//UnityEngine.Debug.Log ( output );
-		}
-		
-		UnityEngine.Debug.Log ( output.name );*/
-		
 		return environments;
 	}
-	
-	
-	/*private SortedDictionary <float, Environment> SetEnvironmentConditions ( Environments allEnvironments )
-	{
-		
-		SortedDictionary <float, Environment> minimumEnvironmentConditions = new SortedDictionary <float, Environment> ();
-		
-		foreach ( Environment environment in allEnvironments.allEnvironments )
-		{
-			
-			float minimumElevation = 0;
-			try
-			{
-				
-				minimumElevation = Convert.ToSingle ( environment.minElevation );
-			} catch ( Exception error )
-			{
-				
-				UnityEngine.Debug.Log ( error );
-			}
-			
-			minimumEnvironmentConditions.Add ( minimumElevation, environment );
-		}
-		
-		return minimumEnvironmentConditions;
-	}*/
 	
 	
 	private Region[,] CreateRegions ( World newWorld )
@@ -324,7 +306,7 @@ public class Generator : MonoBehaviour
 		
 		GameObject newRegionObject = GameObject.CreatePrimitive ( PrimitiveType.Plane );
 		
-		newRegionObject.name = "Region" + regionYIndex + "," + regionXIndex;
+		newRegionObject.name = "Region" + regionXIndex + "," + regionYIndex;
 		newRegionObject.collider.enabled = false;
 		
 		newRegionObject.transform.localScale = new Vector3 ( newWorld.regionDimensions.x * 0.1f, 1, newWorld.regionDimensions.z * 0.1f );
@@ -375,53 +357,12 @@ public class Generator : MonoBehaviour
 		tile.name = "Tile " + tileYIndex + ", " + tileXIndex;
 		
 		tile.region = newRegion;
-		tile.position = new Int2D ( tileXIndex, tileYIndex );
 		tile.position = new Int2D (( newRegion.position.x * newRegion.world.regionDimensions.x ) + tileXIndex, ( newRegion.position.z * newRegion.world.regionDimensions.z ) + tileYIndex );
 		
+		newRegion.world.tiles[tileXIndex, tileYIndex] = tile;
 		tileQueue.Add ( tile );
 		return tile;
 	}
-	
-	
-	/*private Environment GetTileEnvironment ( Tile newTile )
-	{
-
-		float tilePerlin = GetTilePerlin ( newTile );
-		float higherElevation = 0;
-		float lowerElevation = 0;
-		
-		Environment higherEnvironment = null;
-		Environment lowerEnvironment = null;
-		
-		foreach ( KeyValuePair<float, Environment> keyValuePair in newTile.region.world.environments.minimumEnvironmentConditions )
-		{
-			
-			float currentElevation = keyValuePair.Key;
-			
-			if ( currentElevation > tilePerlin )
-			{
-
-				higherElevation = currentElevation;
-				higherEnvironment = keyValuePair.Value;
-				break;
-			} else
-			{
-				
-				lowerElevation = currentElevation;
-				lowerEnvironment = keyValuePair.Value;
-			}
-		}
-		
-		if ( Mathf.Abs ( higherElevation - tilePerlin ) > Mathf.Abs ( tilePerlin - lowerElevation ))
-		{
-			
-			return lowerEnvironment;
-		} else
-		{
-			
-			return higherEnvironment;
-		}
-	}*/
 	
 	
 	private float GetTilePerlin ( Tile newTile )

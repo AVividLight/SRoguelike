@@ -18,6 +18,8 @@ public class World
 	public Region[,] regions;
 	public Int2D regionDimensions = new Int2D ();
 	
+	public Tile[,] tiles;
+	
 	public World ( int argWorldWidth, int argWorldHeight, int argRegionWidth, int argRegionHeight )
 	{
 		
@@ -57,18 +59,10 @@ public class Tile
 }
 
 
-[XmlRoot ( "Environments" )]
 public class Environments
 {
 	
-	//[XmlElement ( "Meta" )]
 	public EnvironmentsMeta meta = new EnvironmentsMeta ();
-	
-	//[XmlElement ( "Environment" )]
-	//public List<Environment> allEnvironments = new List<Environment> ();
-	
-	//[XmlIgnore]
-	//public SortedDictionary <float, Environment> minimumEnvironmentConditions;
 	
 	public Dictionary <string, Environment> environmentList = new Dictionary <string, Environment> ();
 }
@@ -77,12 +71,11 @@ public class Environments
 public class EnvironmentsMeta
 {
 	
-	[XmlElement]
 	public float seaLevel;
 }
 
 
-public class Environment
+public class Environment : IEquatable <Environment>
 {
 	
 	public String name;
@@ -94,6 +87,19 @@ public class Environment
 	public Walkable walkable = new Walkable ();
 	
 	public Climate climate = new Climate ();
+	
+	
+	public bool Equals ( Environment other )
+	{
+		
+		if ( other is Environment == false )
+		{
+			
+			return false;
+		}
+		
+		return this.name == other.name;
+	}
 }
 
 
