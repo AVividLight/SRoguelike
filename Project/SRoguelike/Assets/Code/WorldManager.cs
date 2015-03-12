@@ -18,7 +18,7 @@ public class World
 	public Region[,] regions;
 	public Int2D regionDimensions = new Int2D ();
 	
-	public Tile[,] tiles;
+	//public Tile[,] tiles;
 	
 	public World ( int argWorldWidth, int argWorldHeight, int argRegionWidth, int argRegionHeight )
 	{
@@ -88,6 +88,11 @@ public class Environment : IEquatable <Environment>
 	
 	public Climate climate = new Climate ();
 	
+	/*public static Environment operator == ( Environment e1, String e2 ) 
+	{
+		
+		return new bool ( e1.name == e2, e1.name != e2 );
+	}*/
 	
 	public bool Equals ( Environment other )
 	{

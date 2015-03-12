@@ -162,7 +162,8 @@ public class Generator : MonoBehaviour
 		newTile.collider.enabled = false;
 	
 		newTile.transform.localScale = new Vector3 ( 0.1f, 1, 0.1f );
-		newTile.transform.localPosition = new Vector3 ( tile.position.x, 1, tile.position.z );
+		newTile.transform.localPosition = new Vector3 (( tile.region.position.x * tile.region.world.regionDimensions.x ) + tile.position.x, 1, ( tile.region.position.z * tile.region.world.regionDimensions.z ) + tile.position.z );
+		//tile.position = new Int2D (( newRegion.position.x * newRegion.world.regionDimensions.x ) + tileXIndex, ( newRegion.position.z * newRegion.world.regionDimensions.z ) + tileYIndex );
 		newTile.transform.parent = tile.region.regionObject.transform;
 	
 		newTile.renderer.material = selfIllumDiffuse;
@@ -202,23 +203,37 @@ public class Generator : MonoBehaviour
 		if ( tile.region.world.environments.environmentList.TryGetValue ( "Shore", out shore ))
 		{
 		
-			//UnityEngine.Debug.Log ( tile.position.AsString ());
 			if ( tile.position.x > 0 )
 			{
 				
-				UnityEngine.Debug.Log ( worldManager.world.tiles [tile.position.x, tile.position.z].name );
-				/*if ( tile.region.world.tiles [tile.position.x - 1, tile.position.z].name == "Water" )
+				
+			} else {
+				
+				if ( tile.region.position.x > 0 )
 				{
 					
-					//tile.region.world.tiles [tile.position.x - 1, tile.position.z].tileObject.renderer.material.color = Color.yellow;
-				}*/
+					
+				}
 			}
 				
 			if ( tile.position.z > 0 )
 			{}
 			
-			if ( tile.position.x < tile.region.world.regionDimensions.x )
-			{}
+			if ( tile.position.x < tile.region.world.regionDimensions.x - 1 )
+			{
+				
+				if ( tile.region.tiles [tile.position.x + 1, tile.position.z].environment != null )
+				{
+					
+					tile.tileObject.renderer.material.color = Color.red;
+					
+					if ( tile.region.tiles [tile.position.x + 1, tile.position.z].environment.name != "Water" )
+					{
+						
+						tile.tileObject.renderer.material.color = Color.red;
+					}
+				}
+			}
 				
 			if ( tile.position.z < tile.region.world.regionDimensions.z )
 			{}
@@ -237,7 +252,6 @@ public class Generator : MonoBehaviour
 		
 		tile.environment = environment;
 		tile.tileObject.renderer.material.color = GetTileColour ( tile );
-		//tile.tileObject.renderer.material.color = Color.green;
 	}
 	
 	
@@ -245,7 +259,6 @@ public class Generator : MonoBehaviour
 	{
 			
 		World newWorld = new World ( worldWidth, worldHeight, regionWidth, regionHeight );
-		newWorld.tiles = new Tile[worldWidth * regionWidth, worldHeight * regionHeight];
 		
 		GameObject newWorldObject = new GameObject ();
 		newWorldObject.transform.parent = gameObject.transform;
@@ -257,8 +270,19 @@ public class Generator : MonoBehaviour
 		
 		newWorld.regions = CreateRegions ( newWorld );
 		
-		loadingStage = 0;
+		/*int i = 0;
+		foreach ( Region r in newWorld.regions )
+		{
+			
+			foreach ( Tile t in r.tiles )
+			{
+				
+				UnityEngine.Debug.Log ( i + " // " + t.name );
+				i += 1;
+			}
+		}*/
 		
+		loadingStage = 0;
 		return newWorld;
 	}
 	
@@ -314,6 +338,7 @@ public class Generator : MonoBehaviour
 		newRegionObject.transform.parent = newWorld.worldObject.transform;
 		
 		newRegion.regionObject = newRegionObject;
+		newRegion.tiles = new Tile[newWorld.regionDimensions.x, newWorld.regionDimensions.z];
 		
 		//if ( regionXIndex == Player.player.position.x && regionYIndex == Player.player.position.z )
 		//{
@@ -357,9 +382,9 @@ public class Generator : MonoBehaviour
 		tile.name = "Tile " + tileYIndex + ", " + tileXIndex;
 		
 		tile.region = newRegion;
-		tile.position = new Int2D (( newRegion.position.x * newRegion.world.regionDimensions.x ) + tileXIndex, ( newRegion.position.z * newRegion.world.regionDimensions.z ) + tileYIndex );
+		tile.position = new Int2D ( tileXIndex, tileYIndex );
 		
-		newRegion.world.tiles[tileXIndex, tileYIndex] = tile;
+		tile.region.tiles [tileXIndex, tileYIndex] = tile;
 		tileQueue.Add ( tile );
 		return tile;
 	}
@@ -368,10 +393,10 @@ public class Generator : MonoBehaviour
 	private float GetTilePerlin ( Tile newTile )
 	{
 		
-		//int xOffset = ( newTile.region.position.x * newTile.region.world.regionDimensions.x );
-		//int yOffset = ( newTile.region.position.z * newTile.region.world.regionDimensions.z );
+		int xOffset = ( newTile.region.position.x * newTile.region.world.regionDimensions.x );
+		int yOffset = ( newTile.region.position.z * newTile.region.world.regionDimensions.z );
 		
-		float newPerlinValue = newTile.region.world.worldPerlin[/*xOffset +*/ newTile.position.x, /*yOffset +*/ newTile.position.z];
+		float newPerlinValue = newTile.region.world.worldPerlin[xOffset + newTile.position.x, yOffset + newTile.position.z];
 		
 		return newPerlinValue;
 	}
