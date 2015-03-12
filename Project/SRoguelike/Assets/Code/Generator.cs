@@ -94,7 +94,7 @@ public class Generator : MonoBehaviour
 				
 				case 2:
 				int tileShoresPerFrame = 0;
-				while ( tileShoresPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z )
+				while ( tileShoresPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
 				{
 			
 					if ( tileQueue.Any () == true )
@@ -163,7 +163,6 @@ public class Generator : MonoBehaviour
 	
 		newTile.transform.localScale = new Vector3 ( 0.1f, 1, 0.1f );
 		newTile.transform.localPosition = new Vector3 (( tile.region.position.x * tile.region.world.regionDimensions.x ) + tile.position.x, 1, ( tile.region.position.z * tile.region.world.regionDimensions.z ) + tile.position.z );
-		//tile.position = new Int2D (( newRegion.position.x * newRegion.world.regionDimensions.x ) + tileXIndex, ( newRegion.position.z * newRegion.world.regionDimensions.z ) + tileYIndex );
 		newTile.transform.parent = tile.region.regionObject.transform;
 	
 		newTile.renderer.material = selfIllumDiffuse;
@@ -202,41 +201,150 @@ public class Generator : MonoBehaviour
 		Environment shore;
 		if ( tile.region.world.environments.environmentList.TryGetValue ( "Shore", out shore ))
 		{
-		
-			if ( tile.position.x > 0 )
-			{
-				
-				
-			} else {
-				
-				if ( tile.region.position.x > 0 )
-				{
-					
-					
-				}
-			}
-				
-			if ( tile.position.z > 0 )
-			{}
 			
-			if ( tile.position.x < tile.region.world.regionDimensions.x - 1 )
+			if ( tile.environment != null && tile.environment.name == "Water" )
 			{
-				
-				if ( tile.region.tiles [tile.position.x + 1, tile.position.z].environment != null )
+		
+				/*if ( tile.position.x > 0 )
 				{
 					
-					tile.tileObject.renderer.material.color = Color.red;
-					
-					if ( tile.region.tiles [tile.position.x + 1, tile.position.z].environment.name != "Water" )
+					if ( tile.region.tiles [tile.position.x - 1, tile.position.z].environment != null )
 					{
 						
-						tile.tileObject.renderer.material.color = Color.red;
+						//tile.region.tiles [tile.position.x - 1, tile.position.z].tileObject.renderer.material.color = Color.black;
+						
+						if ( tile.region.tiles [tile.position.x - 1, tile.position.z].environment.name == "Water" )
+						{
+							
+							//tile.region.tiles [tile.position.x - 1, tile.position.z].tileObject.renderer.material.color = Color.yellow;
+						}
+					} else {
+						
+						tile.region.tiles [tile.position.x - 1, tile.position.z].tileObject.renderer.material.color = Color.red;
+					}
+				} else {
+					
+					if ( tile.region.position.x > 0 )
+					{
+						
+						if ( tile.region.world.regions[tile.region.position.x - 1, tile.region.position.z].tiles[tile.region.world.regionDimensions.x - 1, tile.position.z].environment != null )
+						{
+							
+							if ( tile.region.world.regions[tile.region.position.x - 1, tile.region.position.z].tiles[tile.region.world.regionDimensions.x - 1, tile.position.z].environment.name == "Water" )
+							{
+							
+								tile.region.world.regions[tile.region.position.x - 1, tile.region.position.z].tiles[tile.region.world.regionDimensions.x - 1, tile.position.z].tileObject.renderer.material.color = Color.green;
+							}
+						}
 					}
 				}
-			}
 				
-			if ( tile.position.z < tile.region.world.regionDimensions.z )
-			{}
+					
+				if ( tile.position.z > 0 )
+				{
+					
+					if ( tile.region.tiles [tile.position.x, tile.position.z - 1].environment != null )
+					{
+						
+						//tile.region.tiles [tile.position.x, tile.position.z - 1].tileObject.renderer.material.color = Color.black;
+						
+						if ( tile.region.tiles [tile.position.x, tile.position.z - 1].environment.name == "Water" )
+						{
+							
+							//tile.region.tiles [tile.position.x, tile.position.z - 1].tileObject.renderer.material.color = Color.yellow;
+						}
+					} else {
+						
+						tile.region.tiles [tile.position.x, tile.position.z - 1].tileObject.renderer.material.color = Color.red;
+					}
+				} else {
+					
+					if ( tile.region.position.z > 0 )
+					{
+						
+						if ( tile.region.world.regions[tile.region.position.x, tile.region.position.z - 1].tiles[tile.position.x, tile.region.world.regionDimensions.z - 1].environment != null )
+						{
+							
+							if ( tile.region.world.regions[tile.region.position.x, tile.region.position.z - 1].tiles[tile.position.x, tile.region.world.regionDimensions.z - 1].environment.name == "Water" )
+							{
+							
+								tile.region.world.regions[tile.region.position.x, tile.region.position.z - 1].tiles[tile.position.x, tile.region.world.regionDimensions.z - 1].tileObject.renderer.material.color = Color.green;
+							}
+						}
+					}
+				}
+				
+				
+				if ( tile.position.x < tile.region.world.regionDimensions.x - 1 )
+				{
+					
+					if ( tile.region.tiles [tile.position.x + 1, tile.position.z].environment != null )
+					{
+						
+						//tile.region.tiles [tile.position.x + 1, tile.position.z].tileObject.renderer.material.color = Color.black;
+						
+						if ( tile.region.tiles [tile.position.x + 1, tile.position.z].environment.name == "Water" )
+						{
+							
+							//tile.region.tiles [tile.position.x + 1, tile.position.z].tileObject.renderer.material.color = Color.yellow;
+						}
+					} else {
+						
+						tile.region.tiles [tile.position.x + 1, tile.position.z].tileObject.renderer.material.color = Color.red;
+					}
+				} else {
+					
+					if ( tile.region.position.x < tile.region.world.regionDimensions.x - 1 )
+					{
+						
+						if ( tile.region.world.regions[tile.region.position.x + 1, tile.region.position.z].tiles[0, tile.position.z].environment != null )
+						{
+							
+							if ( tile.region.world.regions[tile.region.position.x + 1, tile.region.position.z].tiles[0, tile.position.z].environment.name == "Water" )
+							{
+							
+								tile.region.world.regions[tile.region.position.x + 1, tile.region.position.z].tiles[0, tile.position.z].tileObject.renderer.material.color = Color.green;
+							}
+						}
+					}
+				}
+				
+				
+				if ( tile.position.z < tile.region.world.regionDimensions.z - 1 )
+				{
+					
+					if ( tile.region.tiles [tile.position.x, tile.position.z + 1].environment != null )
+					{
+						
+						//tile.region.tiles [tile.position.x, tile.position.z + 1].tileObject.renderer.material.color = Color.black;
+						
+						if ( tile.region.tiles [tile.position.x, tile.position.z + 1].environment.name == "Water" )
+						{
+							
+							//tile.region.tiles [tile.position.x, tile.position.z + 1].tileObject.renderer.material.color = Color.yellow;
+						}
+					} else {
+						
+						tile.region.tiles [tile.position.x, tile.position.z + 1].tileObject.renderer.material.color = Color.red;
+					}
+				} else {
+					
+					UnityEngine.Debug.Log ( tile.region.position.z + " < " + ( tile.region.world.regionDimensions.z - 1 ));
+					if ( tile.region.position.z < tile.region.world.regionDimensions.z - 1 )
+					{
+						
+						if ( tile.region.world.regions[tile.region.position.x, tile.region.position.z + 1].tiles[tile.position.x, 0].environment != null )
+						{
+							
+							if ( tile.region.world.regions[tile.region.position.x, tile.region.position.z + 1].tiles[tile.position.x, 0].environment.name == "Water" )
+							{
+							
+								tile.region.world.regions[tile.region.position.x, tile.region.position.z + 1].tiles[tile.position.x, 0].tileObject.renderer.material.color = Color.green;
+							}
+						}
+					}
+				}*/
+			}
 
 			
 			return 0;
@@ -269,18 +377,6 @@ public class Generator : MonoBehaviour
 		newWorld.environments = GetEnvironments ();
 		
 		newWorld.regions = CreateRegions ( newWorld );
-		
-		/*int i = 0;
-		foreach ( Region r in newWorld.regions )
-		{
-			
-			foreach ( Tile t in r.tiles )
-			{
-				
-				UnityEngine.Debug.Log ( i + " // " + t.name );
-				i += 1;
-			}
-		}*/
 		
 		loadingStage = 0;
 		return newWorld;
@@ -417,7 +513,7 @@ public class Generator : MonoBehaviour
 		
 		float[,] pixels = new float [ perlinWidth, perlinHeight ];
 		
-		float scale = 1.0f;
+		float scale = 3.0f;
 
 		float y = 0;
 		while ( y < perlinHeight )
