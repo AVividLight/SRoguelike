@@ -38,6 +38,67 @@ public class Region
 	public World world;
 	public Int2D position;
 	
+	public Region Top
+	{
+			
+		get
+		{
+			
+			if ( position.z + 1 > world.worldDimensions.z - 1 )
+			{
+					
+				return null;
+			}
+			
+			return world.regions[position.x, position.z + 1];
+		}
+	}
+	public Region Left
+	{
+		
+		get
+		{
+			
+			if ( position.x - 1 < 0 )
+			{
+				
+				return null;
+			}
+			
+			return world.regions[position.x - 1, position.z];
+		}
+	}
+	public Region Right
+	{
+		
+		get
+		{
+			
+			if ( position.x + 1 > world.worldDimensions.x - 1 )
+			{
+				
+				return null;
+			}
+			
+			return world.regions[position.x + 1, position.z];
+		}
+	}
+	public Region Bottom
+	{
+		
+		get
+		{
+			
+			if ( position.z - 1 < 0 )
+			{
+				
+				return null;
+			}
+			
+			return world.regions[position.x, position.z - 1];
+		}
+	}
+	
 	public GameObject regionObject;
 	
 	public Tile[,] tiles;
@@ -51,6 +112,91 @@ public class Tile
 	
 	public Region region;
 	public Int2D position;
+	
+	public Tile Top
+	{
+			
+		get
+		{
+			
+			if ( position.z + 1 > region.world.regionDimensions.z - 1 )
+			{
+				
+				if ( region.position.z + 1 > region.world.worldDimensions.z - 1 )
+				{
+					
+					return null;
+				}
+				
+				return region.world.regions[region.position.x, region.position.z + 1].tiles[position.x, 0];
+			}
+			
+			return region.tiles[position.x, position.z + 1];
+		}
+	}
+	public Tile Left
+	{
+		
+		get
+		{
+			
+			if ( position.x - 1 < 0 )
+			{
+				
+				if ( region.position.x - 1 < 0 )
+				{
+					
+					return null;
+				}
+				
+				return region.world.regions[region.position.x - 1, region.position.z].tiles[region.world.regionDimensions.x - 1, position.z];
+			}
+			
+			return region.tiles[position.x - 1, position.z];
+		}
+	}
+	public Tile Right
+	{
+		
+		get
+		{
+			
+			if ( position.x + 1 > region.world.regionDimensions.x - 1 )
+			{
+				
+				if ( region.position.x + 1 > region.world.worldDimensions.x - 1  )
+				{
+					
+					return null;
+				}
+				
+				return region.world.regions[region.position.x + 1, region.position.z].tiles[0, position.z];
+			}
+			
+			return region.tiles[position.x + 1, position.z];
+		}
+	}
+	public Tile Bottom
+	{
+		
+		get
+		{
+			
+			if ( position.z - 1 < 0 )
+			{
+				
+				if ( region.position.z - 1 < 0 )
+				{
+					
+					return null;
+				}
+				
+				return region.world.regions[region.position.x, region.position.z - 1].tiles[position.x, region.world.regionDimensions.z - 1];
+			}
+			
+			return region.tiles[position.x, position.z - 1];
+		}
+	}
 	
 	public GameObject tileObject;
 	public bool walkable { get; set; }

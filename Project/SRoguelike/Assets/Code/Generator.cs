@@ -16,7 +16,7 @@ public class Generator : MonoBehaviour
 	
 	private Material selfIllumDiffuse;
 
-	private List<Tile> tileQueue = new List<Tile> ();
+	private Queue<Tile> tileQueue = new Queue<Tile> ();
 	
 	
 	private void Start ()
@@ -41,18 +41,18 @@ public class Generator : MonoBehaviour
 				while ( newTilesPerFrame < ( worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z ) * 1 )
 				{
 			
-					if ( tileQueue.Any () == true )
+					if ( tileQueue.Count > 0 )
 					{
 
 						loadingInformation = "Creating " + ( tileQueue.Count () - 1 ) + " tile objects.";
 							
-						if ( CreateTileObject ( tileQueue[0] ) != 0 )
+						if ( CreateTileObject ( tileQueue.Peek ()) != 0 )
 						{
 							
-							UnityEngine.Debug.Log ( "Unable to create tile object, " + tileQueue[0].name );
+							UnityEngine.Debug.Log ( "Unable to create tile object, " + tileQueue.Peek ().name );
 						}
 						
-						tileQueue.RemoveAt ( 0 );
+						tileQueue.Dequeue ();
 					} else {
 							
 						RepopulateTileQueue ();
@@ -69,18 +69,18 @@ public class Generator : MonoBehaviour
 				while ( tileWaterPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z )
 				{
 			
-					if ( tileQueue.Any () == true )
+					if ( tileQueue.Count () > 0 )
 					{
 						
 						loadingInformation = "Looking for water on " + ( tileQueue.Count () - 1 ) + " tiles.";
 						
-						if ( CreateWater ( tileQueue[0] ) != 0 )
+						if ( CreateWater ( tileQueue.Peek ()) != 0 )
 						{
 							
-							UnityEngine.Debug.Log ( "Unable to create environment, " + tileQueue[0].name );
+							UnityEngine.Debug.Log ( "Unable to create environment, " + tileQueue.Peek ().name );
 						}
 						
-						tileQueue.RemoveAt ( 0 );
+						tileQueue.Dequeue ();
 					} else {
 							
 						RepopulateTileQueue ();
@@ -93,22 +93,55 @@ public class Generator : MonoBehaviour
 				break;
 				
 				case 2:
+				int tileGrassPerFrame = 0;
+				while ( tileGrassPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
+				{
+					
+					if ( tileQueue.Count > 0 )
+					{
+						
+						loadingInformation = "Looking for grass on " + ( tileQueue.Count () - 1 ) + " tiles.";
+						
+						if ( CreateGrass ( tileQueue.Peek ()) != 0 )
+						{
+							
+							UnityEngine.Debug.Log ( "Unable to create grass, " + tileQueue.Peek ().name );
+						}
+						
+						tileQueue.Dequeue ();
+					} else {
+							
+						RepopulateTileQueue ();
+						loadingStage = 3;
+						break;
+					}
+					
+					tileGrassPerFrame += 1;
+				}
+				break;
+				
+				case 3:
 				int tileShoresPerFrame = 0;
 				while ( tileShoresPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
 				{
 			
-					if ( tileQueue.Any () == true )
+					if ( tileQueue.Count () > 0 )
 					{
 						
 						loadingInformation = "Looking for shore on " + ( tileQueue.Count () - 1 ) + " tiles.";
 						
-						if ( CreateShore ( tileQueue[0] ) != 0 )
+						if ( CreateShore ( tileQueue.Peek ()) != 0 )
 						{
 							
-							UnityEngine.Debug.Log ( "Unable to create shore, " + tileQueue[0].name );
+							UnityEngine.Debug.Log ( "Unable to create shore, " + tileQueue.Peek ().name );
 						}
 						
-						tileQueue.RemoveAt ( 0 );
+						tileQueue.Dequeue ();
+					} else {
+							
+						RepopulateTileQueue ();
+						loadingStage = 4;
+						break;
 					}
 					
 					tileShoresPerFrame += 1;
@@ -141,7 +174,7 @@ public class Generator : MonoBehaviour
 	   				while ( tileXIndex < worldManager.world.regionDimensions.x )
 	   				{
 					
-	   					tileQueue.Add ( worldManager.world.regions[regionXIndex, regionYIndex].tiles[tileXIndex, tileYIndex] );
+	   					tileQueue.Enqueue ( worldManager.world.regions[regionXIndex, regionYIndex].tiles[tileXIndex, tileYIndex] );
 	   					tileXIndex += 1;
 	   				}
 	   				tileYIndex += 1;
@@ -195,6 +228,15 @@ public class Generator : MonoBehaviour
 	}
 	
 	
+	private int CreateGrass ( Tile tile )
+	{
+		
+		Tile nearestWater = FindNearest ( tile, 2, "Water" );
+		
+		return 0;
+	}
+	
+	
 	private int CreateShore ( Tile tile )
 	{
 
@@ -204,6 +246,67 @@ public class Generator : MonoBehaviour
 			
 			if ( tile.environment != null && tile.environment.name == "Water" )
 			{
+				
+				int shoreChance = 0;
+				
+				if ( tile.position.x < tile.region.world.regionDimensions.x - 1 )
+				{
+					
+					if ( tile.region.tiles[tile.position.x + 1, tile.position.z].environment != null && tile.region.tiles[tile.position.x + 1, tile.position.z].environment.name != "Water" )
+					{
+						
+						shoreChance += 1;
+						UnityEngine.Debug.Log ( "ShoreChance a == " + shoreChance );
+					}
+				}
+				
+				if ( tile.position.x > 0 )
+				{
+					
+					if ( tile.region.tiles[tile.position.x - 1, tile.position.z].environment != null && tile.region.tiles[tile.position.x - 1, tile.position.z].environment.name != "Water" )
+					{
+						
+						shoreChance += 1;
+						UnityEngine.Debug.Log ( "ShoreChance b == " + shoreChance );
+					}
+				}
+					
+				if ( tile.position.z < tile.region.world.regionDimensions.z - 1 )
+				{
+					
+					if ( tile.region.tiles[tile.position.x, tile.position.z + 1].environment != null && tile.region.tiles[tile.position.x, tile.position.z + 1].environment.name != "Water" )
+					{
+						
+						shoreChance += 1;
+						UnityEngine.Debug.Log ( "ShoreChance c == " + shoreChance );
+					}
+				}
+
+				if ( tile.position.z > 0 )
+				{
+					
+					if ( tile.region.tiles[tile.position.x, tile.position.z - 1].environment != null && tile.region.tiles[tile.position.x, tile.position.z - 1].environment.name != "Water" )
+					{
+						
+						shoreChance += 1;
+						UnityEngine.Debug.Log ( "ShoreChance d == " + shoreChance );
+					}
+				}
+
+				int i = 0;
+				while ( i < shoreChance )
+				{
+					
+					if ( UnityEngine.Random.Range ( 0, 3 ) > 1 )
+					{
+						
+						UnityEngine.Debug.Log ( "Will be shore." );
+						SetTileEnvironment ( tile, shore );
+						break;
+					}
+					
+					i += 1;
+				}
 		
 				/*if ( tile.position.x > 0 )
 				{
@@ -350,8 +453,114 @@ public class Generator : MonoBehaviour
 			return 0;
 		}
 		
-		UnityEngine.Debug.Log ( "Unable to find environment 'Water'!" );
+		UnityEngine.Debug.Log ( "No environment, 'Water', could be found!" );
 		return 1;
+	}
+	
+	/*
+	
+		Queue<Node> q = new Queue<Node>();
+		q.Enqueue(root);
+		while(q.Count > 0)
+		{
+		    Node current = q.Dequeue();
+		    if(current == null)
+		        continue;
+		    q.Enqueue(current.Left);
+		    q.Enqueue(current.Right);
+		
+		    DoSomething(current);
+		}
+	
+	*/
+	
+	
+	private Tile FindNearest ( Tile tile, int range, String environmentName )
+	{
+		
+		Tile nearestTile = null;
+		List<Tile> relevantTiles = new List<Tile> ();
+		List<Int2D> visitedTiles = new List<Int2D> ();
+		
+		Queue<Tile> queue = new Queue<Tile> ();
+		queue.Enqueue ( tile );
+		
+		int tempLimit = 0;
+		while ( queue.Count > 0 )
+		{
+			
+			if ( tempLimit == 1 )
+			{
+				
+				break;
+			}
+			
+			Tile current = queue.Dequeue ();
+			if ( current == null || visitedTiles.Contains ( current.position ))
+			{
+				
+				continue;
+			}
+			
+			visitedTiles.Add ( current.position );
+
+			queue.Enqueue ( current.Top );
+			queue.Enqueue ( current.Left );
+			queue.Enqueue ( current.Right );
+			queue.Enqueue ( current.Bottom );
+			
+			if ( current.environment == null || current.environment.name != "Water" )
+			{
+			
+				current.tileObject.renderer.material.color = Color.red;
+			}
+			
+			tempLimit += 1;
+		}
+		
+		/*if ( range <= 1 )
+		{
+			
+			range = 2;
+		}
+		
+		int totalIndex = 0;
+		while ( totalIndex < Mathf.Pow ( range, 2 ) + 2 )
+		{
+		
+			int regionYIndex = tile.position.z - range;
+			while ( regionYIndex < tile.position.z + range )
+			{
+	    	
+				int regionXIndex = tile.position.x - range;
+				while ( regionXIndex < tile.position.x + range )
+				{
+			
+	   				int tileYIndex = 0;
+	   				while ( tileYIndex < worldManager.world.regionDimensions.z )
+	   				{
+					
+	   					int tileXIndex = 0;
+	   					while ( tileXIndex < worldManager.world.regionDimensions.x )
+	   					{
+						
+						
+	   						tileXIndex += 1;
+	   					}
+						
+	   					tileYIndex += 1;
+	   				}
+					
+					regionXIndex += 1;
+				}
+				
+				regionYIndex += 1;
+			}
+			
+			totalIndex += 1;
+		}*/
+		
+		return nearestTile;
 	}
 	
 	
@@ -481,7 +690,7 @@ public class Generator : MonoBehaviour
 		tile.position = new Int2D ( tileXIndex, tileYIndex );
 		
 		tile.region.tiles [tileXIndex, tileYIndex] = tile;
-		tileQueue.Add ( tile );
+		tileQueue.Enqueue ( tile );
 		return tile;
 	}
 	
