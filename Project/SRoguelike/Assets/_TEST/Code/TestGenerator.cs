@@ -25,7 +25,7 @@ public class TestGenerator : MonoBehaviour
 		tempWorld = GenerateWorld ( 0, 0, 8, 6, 8, 8 );
 		
 		
-		Tile t = FindNearest ( tempWorld.regions[0, 0].tiles[0, 0], 2, "Water" );
+		Tile t = FindNearest ( tempWorld.regions[2, 2].tiles[4, 3], 2, "Water" );
 		InvokeRepeating ( "SlowUpdate", 1, 1 );
 	}
 	
@@ -107,23 +107,20 @@ public class TestGenerator : MonoBehaviour
 		Queue<Tile> queue = new Queue<Tile> ();
 		queue.Enqueue ( tile );
 		
-		int tempLimit = 0;
 		while ( queue.Count > 0 )
 		{
-			
-			/*if ( tempLimit == Mathf.Pow ( range, 2 ) * 4 )
-			{
-				
-				UnityEngine.Debug.LogError ( "Queue Break" );
-				break;
-			}*/
 			
 			Tile current = queue.Dequeue ();
 			if ( current == null || visitedTiles.Contains ( current.position ))
 			{
 				
-				UnityEngine.Debug.LogWarning ( "Null or Existant" );
 				continue;
+			}
+			
+			if ( current.position.z > tile.position.z + range )
+			{
+
+				break;
 			}
 			
 			visitedTiles.Add ( current.position );
@@ -134,8 +131,6 @@ public class TestGenerator : MonoBehaviour
 			queue.Enqueue ( current.Bottom );
 			
 			tileQueue.Enqueue ( current );
-			
-			tempLimit += 1;
 		}
 		
 		return nearestTile;

@@ -502,6 +502,12 @@ public class Generator : MonoBehaviour
 				continue;
 			}
 			
+			if ( current.position.z > tile.position.z + range )
+			{
+
+				break;
+			}
+			
 			visitedTiles.Add ( current.position );
 
 			queue.Enqueue ( current.Top );
