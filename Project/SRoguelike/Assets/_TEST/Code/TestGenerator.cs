@@ -23,10 +23,8 @@ public class TestGenerator : MonoBehaviour
 		selfIllumDiffuse = new Material ( Shader.Find ( "Self-Illumin/Diffuse" )); 
 		
 		tempWorld = GenerateWorld ( 0, 0, 8, 6, 8, 8 );
-		
-		
-		Tile t = FindNearest ( tempWorld.regions[2, 2].tiles[4, 3], 2, "Water" );
-		InvokeRepeating ( "SlowUpdate", 1, 1 );
+		Tile testingTile = FindNearest ( tempWorld.regions[2, 2].tiles[4, 3], 3, "Water" );
+		InvokeRepeating ( "SlowUpdate", 1, 0.5f );
 	}
 	
 	
@@ -101,7 +99,6 @@ public class TestGenerator : MonoBehaviour
 	{
 		
 		Tile nearestTile = null;
-		List<Tile> relevantTiles = new List<Tile> ();
 		List<Int2D> visitedTiles = new List<Int2D> ();
 		
 		Queue<Tile> queue = new Queue<Tile> ();

@@ -44,7 +44,7 @@ public class Generator : MonoBehaviour
 					if ( tileQueue.Count > 0 )
 					{
 
-						loadingInformation = "Creating " + ( tileQueue.Count () - 1 ) + " tile objects.";
+						loadingInformation = "Creating " + ( tileQueue.Count () - 1 ) + " tiles.";
 							
 						if ( CreateTileObject ( tileQueue.Peek ()) != 0 )
 						{
@@ -72,7 +72,7 @@ public class Generator : MonoBehaviour
 					if ( tileQueue.Count () > 0 )
 					{
 						
-						loadingInformation = "Looking for water on " + ( tileQueue.Count () - 1 ) + " tiles.";
+						loadingInformation = "Analysing " + ( tileQueue.Count () - 1 ) + " tiles for water.";
 						
 						if ( CreateWater ( tileQueue.Peek ()) != 0 )
 						{
@@ -94,21 +94,19 @@ public class Generator : MonoBehaviour
 				
 				case 2:
 				int tileGrassPerFrame = 0;
-				while ( tileGrassPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
+				while ( tileGrassPerFrame < 1 ) //worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
 				{
 					
 					if ( tileQueue.Count > 0 )
 					{
 						
-						loadingInformation = "Looking for grass on " + ( tileQueue.Count () - 1 ) + " tiles.";
+						loadingInformation = "Analysing " + ( tileQueue.Count () - 1 ) + " tiles for grass";
 						
-						if ( CreateGrass ( tileQueue.Peek ()) != 0 )
+						if ( CreateGrass ( tileQueue.Dequeue ()) != 0 )
 						{
 							
 							UnityEngine.Debug.Log ( "Unable to create grass, " + tileQueue.Peek ().name );
 						}
-						
-						tileQueue.Dequeue ();
 					} else {
 							
 						RepopulateTileQueue ();
@@ -120,7 +118,7 @@ public class Generator : MonoBehaviour
 				}
 				break;
 				
-				case 3:
+				/*case 3:
 				int tileShoresPerFrame = 0;
 				while ( tileShoresPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
 				{
@@ -128,15 +126,13 @@ public class Generator : MonoBehaviour
 					if ( tileQueue.Count () > 0 )
 					{
 						
-						loadingInformation = "Looking for shore on " + ( tileQueue.Count () - 1 ) + " tiles.";
+						loadingInformation = "Analysing " + ( tileQueue.Count () - 1 ) + " tiles for shore.";
 						
-						if ( CreateShore ( tileQueue.Peek ()) != 0 )
+						if ( CreateShore ( tileQueue.Dequeue ()) != 0 )
 						{
 							
 							UnityEngine.Debug.Log ( "Unable to create shore, " + tileQueue.Peek ().name );
 						}
-						
-						tileQueue.Dequeue ();
 					} else {
 							
 						RepopulateTileQueue ();
@@ -146,7 +142,7 @@ public class Generator : MonoBehaviour
 					
 					tileShoresPerFrame += 1;
 				}
-				break;
+				break;*/
 				
 				default:
 				break;
@@ -231,7 +227,20 @@ public class Generator : MonoBehaviour
 	private int CreateGrass ( Tile tile )
 	{
 		
+		Environment grassland;
+		if ( !worldManager.world.environments.environmentList.TryGetValue ( "Grassland", out grassland ))
+		{
+
+			return 1;
+		}
+		
 		Tile nearestWater = FindNearest ( tile, 2, "Water" );
+		
+		if ( nearestWater != null )
+		{
+			
+			SetTileEnvironment ( tile, grassland );
+		}
 		
 		return 0;
 	}
@@ -457,43 +466,18 @@ public class Generator : MonoBehaviour
 		return 1;
 	}
 	
-	/*
-	
-		Queue<Node> q = new Queue<Node>();
-		q.Enqueue(root);
-		while(q.Count > 0)
-		{
-		    Node current = q.Dequeue();
-		    if(current == null)
-		        continue;
-		    q.Enqueue(current.Left);
-		    q.Enqueue(current.Right);
-		
-		    DoSomething(current);
-		}
-	
-	*/
-	
 	
 	private Tile FindNearest ( Tile tile, int range, String environmentName )
 	{
 		
 		Tile nearestTile = null;
-		List<Tile> relevantTiles = new List<Tile> ();
 		List<Int2D> visitedTiles = new List<Int2D> ();
 		
 		Queue<Tile> queue = new Queue<Tile> ();
 		queue.Enqueue ( tile );
 		
-		int tempLimit = 0;
 		while ( queue.Count > 0 )
 		{
-			
-			if ( tempLimit == 1 )
-			{
-				
-				break;
-			}
 			
 			Tile current = queue.Dequeue ();
 			if ( current == null || visitedTiles.Contains ( current.position ))
@@ -508,6 +492,13 @@ public class Generator : MonoBehaviour
 				break;
 			}
 			
+			if ( current.environment != null && current.environment.name == environmentName )
+			{
+				
+				nearestTile = current;
+				break;
+			}
+			
 			visitedTiles.Add ( current.position );
 
 			queue.Enqueue ( current.Top );
@@ -515,56 +506,8 @@ public class Generator : MonoBehaviour
 			queue.Enqueue ( current.Right );
 			queue.Enqueue ( current.Bottom );
 			
-			if ( current.environment == null || current.environment.name != "Water" )
-			{
-			
-				current.tileObject.renderer.material.color = Color.red;
-			}
-			
-			tempLimit += 1;
+			tileQueue.Enqueue ( current );
 		}
-		
-		/*if ( range <= 1 )
-		{
-			
-			range = 2;
-		}
-		
-		int totalIndex = 0;
-		while ( totalIndex < Mathf.Pow ( range, 2 ) + 2 )
-		{
-		
-			int regionYIndex = tile.position.z - range;
-			while ( regionYIndex < tile.position.z + range )
-			{
-	    	
-				int regionXIndex = tile.position.x - range;
-				while ( regionXIndex < tile.position.x + range )
-				{
-			
-	   				int tileYIndex = 0;
-	   				while ( tileYIndex < worldManager.world.regionDimensions.z )
-	   				{
-					
-	   					int tileXIndex = 0;
-	   					while ( tileXIndex < worldManager.world.regionDimensions.x )
-	   					{
-						
-						
-	   						tileXIndex += 1;
-	   					}
-						
-	   					tileYIndex += 1;
-	   				}
-					
-					regionXIndex += 1;
-				}
-				
-				regionYIndex += 1;
-			}
-			
-			totalIndex += 1;
-		}*/
 		
 		return nearestTile;
 	}
