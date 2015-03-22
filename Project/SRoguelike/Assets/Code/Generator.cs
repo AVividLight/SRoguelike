@@ -303,13 +303,7 @@ public class Generator : MonoBehaviour
 				break;
 			}
 			
-			/*int tLocalOrigin = tile.globalPosition.z - range;
-			int tLocalRegion = tLocalOrigin / tile.region.world.regionDimensions.z;
-			int tLocalTile = tLocalOrigin % tile.region.world.regionDimensions.z;
-		
-			UnityEngine.Debug.Log ( tLocalOrigin + ", " + tLocalRegion + ", " + tLocalTile );*/
-			
-			if ( current.globalPosition.z <= tile.globalPosition.z - range )
+			if ( current.globalPosition.z > tile.globalPosition.z + range )
 			{
 
 				break;

@@ -120,6 +120,18 @@ public class Tile
 			
 			return new Int2D (( region.position.x * region.world.regionDimensions.x ) + position.x, ( region.position.z * region.world.regionDimensions.z ) + position.z );
 		}
+		
+		/*
+		
+		Convert Global to Local (if it's ever needed)
+		
+			int tLocalOrigin = tile.globalPosition.z - range;
+			int tLocalRegion = tLocalOrigin / tile.region.world.regionDimensions.z;
+			int tLocalTile = tLocalOrigin % tile.region.world.regionDimensions.z;
+	    	
+			UnityEngine.Debug.Log ( tLocalOrigin + ", " + tLocalRegion + ", " + tLocalTile );
+		
+		*/
 	}
 	
 	public Tile Top
