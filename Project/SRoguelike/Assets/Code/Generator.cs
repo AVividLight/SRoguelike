@@ -15,6 +15,7 @@ public class Generator : MonoBehaviour
 	private sbyte loadingStage = -1;
 	
 	private Material selfIllumDiffuse;
+	private Environment defaultEnvironment = new Environment ();
 
 	private Queue<Tile> tileQueue = new Queue<Tile> ();
 	
@@ -94,7 +95,7 @@ public class Generator : MonoBehaviour
 				
 				case 2:
 				int tileGrassPerFrame = 0;
-				while ( tileGrassPerFrame < 1 ) //worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
+				while ( tileGrassPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
 				{
 					
 					if ( tileQueue.Count > 0 )
@@ -118,7 +119,7 @@ public class Generator : MonoBehaviour
 				}
 				break;
 				
-				/*case 3:
+				case 3:
 				int tileShoresPerFrame = 0;
 				while ( tileShoresPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
 				{
@@ -142,7 +143,7 @@ public class Generator : MonoBehaviour
 					
 					tileShoresPerFrame += 1;
 				}
-				break;*/
+				break;
 				
 				default:
 				break;
@@ -153,6 +154,8 @@ public class Generator : MonoBehaviour
 	
 	private void RepopulateTileQueue ()
 	{
+		
+		tileQueue = new Queue<Tile> ();
 		
 		int regionYIndex = 0;
 		while ( regionYIndex < worldManager.world.worldDimensions.z )
@@ -234,12 +237,15 @@ public class Generator : MonoBehaviour
 			return 1;
 		}
 		
-		Tile nearestWater = FindNearest ( tile, 2, "Water" );
 		
-		if ( nearestWater != null )
+		if ( tile.environment.name == "Default" )
 		{
+
+			if ( FindNearest ( tile, 5, "Water" ) != null )
+			{
 			
-			SetTileEnvironment ( tile, grassland );
+				SetTileEnvironment ( tile, grassland );
+			}
 		}
 		
 		return 0;
@@ -248,222 +254,26 @@ public class Generator : MonoBehaviour
 	
 	private int CreateShore ( Tile tile )
 	{
-
-		Environment shore;
-		if ( tile.region.world.environments.environmentList.TryGetValue ( "Shore", out shore ))
-		{
-			
-			if ( tile.environment != null && tile.environment.name == "Water" )
-			{
-				
-				int shoreChance = 0;
-				
-				if ( tile.position.x < tile.region.world.regionDimensions.x - 1 )
-				{
-					
-					if ( tile.region.tiles[tile.position.x + 1, tile.position.z].environment != null && tile.region.tiles[tile.position.x + 1, tile.position.z].environment.name != "Water" )
-					{
-						
-						shoreChance += 1;
-						UnityEngine.Debug.Log ( "ShoreChance a == " + shoreChance );
-					}
-				}
-				
-				if ( tile.position.x > 0 )
-				{
-					
-					if ( tile.region.tiles[tile.position.x - 1, tile.position.z].environment != null && tile.region.tiles[tile.position.x - 1, tile.position.z].environment.name != "Water" )
-					{
-						
-						shoreChance += 1;
-						UnityEngine.Debug.Log ( "ShoreChance b == " + shoreChance );
-					}
-				}
-					
-				if ( tile.position.z < tile.region.world.regionDimensions.z - 1 )
-				{
-					
-					if ( tile.region.tiles[tile.position.x, tile.position.z + 1].environment != null && tile.region.tiles[tile.position.x, tile.position.z + 1].environment.name != "Water" )
-					{
-						
-						shoreChance += 1;
-						UnityEngine.Debug.Log ( "ShoreChance c == " + shoreChance );
-					}
-				}
-
-				if ( tile.position.z > 0 )
-				{
-					
-					if ( tile.region.tiles[tile.position.x, tile.position.z - 1].environment != null && tile.region.tiles[tile.position.x, tile.position.z - 1].environment.name != "Water" )
-					{
-						
-						shoreChance += 1;
-						UnityEngine.Debug.Log ( "ShoreChance d == " + shoreChance );
-					}
-				}
-
-				int i = 0;
-				while ( i < shoreChance )
-				{
-					
-					if ( UnityEngine.Random.Range ( 0, 3 ) > 1 )
-					{
-						
-						UnityEngine.Debug.Log ( "Will be shore." );
-						SetTileEnvironment ( tile, shore );
-						break;
-					}
-					
-					i += 1;
-				}
 		
-				/*if ( tile.position.x > 0 )
-				{
-					
-					if ( tile.region.tiles [tile.position.x - 1, tile.position.z].environment != null )
-					{
-						
-						//tile.region.tiles [tile.position.x - 1, tile.position.z].tileObject.renderer.material.color = Color.black;
-						
-						if ( tile.region.tiles [tile.position.x - 1, tile.position.z].environment.name == "Water" )
-						{
-							
-							//tile.region.tiles [tile.position.x - 1, tile.position.z].tileObject.renderer.material.color = Color.yellow;
-						}
-					} else {
-						
-						tile.region.tiles [tile.position.x - 1, tile.position.z].tileObject.renderer.material.color = Color.red;
-					}
-				} else {
-					
-					if ( tile.region.position.x > 0 )
-					{
-						
-						if ( tile.region.world.regions[tile.region.position.x - 1, tile.region.position.z].tiles[tile.region.world.regionDimensions.x - 1, tile.position.z].environment != null )
-						{
-							
-							if ( tile.region.world.regions[tile.region.position.x - 1, tile.region.position.z].tiles[tile.region.world.regionDimensions.x - 1, tile.position.z].environment.name == "Water" )
-							{
-							
-								tile.region.world.regions[tile.region.position.x - 1, tile.region.position.z].tiles[tile.region.world.regionDimensions.x - 1, tile.position.z].tileObject.renderer.material.color = Color.green;
-							}
-						}
-					}
-				}
-				
-					
-				if ( tile.position.z > 0 )
-				{
-					
-					if ( tile.region.tiles [tile.position.x, tile.position.z - 1].environment != null )
-					{
-						
-						//tile.region.tiles [tile.position.x, tile.position.z - 1].tileObject.renderer.material.color = Color.black;
-						
-						if ( tile.region.tiles [tile.position.x, tile.position.z - 1].environment.name == "Water" )
-						{
-							
-							//tile.region.tiles [tile.position.x, tile.position.z - 1].tileObject.renderer.material.color = Color.yellow;
-						}
-					} else {
-						
-						tile.region.tiles [tile.position.x, tile.position.z - 1].tileObject.renderer.material.color = Color.red;
-					}
-				} else {
-					
-					if ( tile.region.position.z > 0 )
-					{
-						
-						if ( tile.region.world.regions[tile.region.position.x, tile.region.position.z - 1].tiles[tile.position.x, tile.region.world.regionDimensions.z - 1].environment != null )
-						{
-							
-							if ( tile.region.world.regions[tile.region.position.x, tile.region.position.z - 1].tiles[tile.position.x, tile.region.world.regionDimensions.z - 1].environment.name == "Water" )
-							{
-							
-								tile.region.world.regions[tile.region.position.x, tile.region.position.z - 1].tiles[tile.position.x, tile.region.world.regionDimensions.z - 1].tileObject.renderer.material.color = Color.green;
-							}
-						}
-					}
-				}
-				
-				
-				if ( tile.position.x < tile.region.world.regionDimensions.x - 1 )
-				{
-					
-					if ( tile.region.tiles [tile.position.x + 1, tile.position.z].environment != null )
-					{
-						
-						//tile.region.tiles [tile.position.x + 1, tile.position.z].tileObject.renderer.material.color = Color.black;
-						
-						if ( tile.region.tiles [tile.position.x + 1, tile.position.z].environment.name == "Water" )
-						{
-							
-							//tile.region.tiles [tile.position.x + 1, tile.position.z].tileObject.renderer.material.color = Color.yellow;
-						}
-					} else {
-						
-						tile.region.tiles [tile.position.x + 1, tile.position.z].tileObject.renderer.material.color = Color.red;
-					}
-				} else {
-					
-					if ( tile.region.position.x < tile.region.world.regionDimensions.x - 1 )
-					{
-						
-						if ( tile.region.world.regions[tile.region.position.x + 1, tile.region.position.z].tiles[0, tile.position.z].environment != null )
-						{
-							
-							if ( tile.region.world.regions[tile.region.position.x + 1, tile.region.position.z].tiles[0, tile.position.z].environment.name == "Water" )
-							{
-							
-								tile.region.world.regions[tile.region.position.x + 1, tile.region.position.z].tiles[0, tile.position.z].tileObject.renderer.material.color = Color.green;
-							}
-						}
-					}
-				}
-				
-				
-				if ( tile.position.z < tile.region.world.regionDimensions.z - 1 )
-				{
-					
-					if ( tile.region.tiles [tile.position.x, tile.position.z + 1].environment != null )
-					{
-						
-						//tile.region.tiles [tile.position.x, tile.position.z + 1].tileObject.renderer.material.color = Color.black;
-						
-						if ( tile.region.tiles [tile.position.x, tile.position.z + 1].environment.name == "Water" )
-						{
-							
-							//tile.region.tiles [tile.position.x, tile.position.z + 1].tileObject.renderer.material.color = Color.yellow;
-						}
-					} else {
-						
-						tile.region.tiles [tile.position.x, tile.position.z + 1].tileObject.renderer.material.color = Color.red;
-					}
-				} else {
-					
-					UnityEngine.Debug.Log ( tile.region.position.z + " < " + ( tile.region.world.regionDimensions.z - 1 ));
-					if ( tile.region.position.z < tile.region.world.regionDimensions.z - 1 )
-					{
-						
-						if ( tile.region.world.regions[tile.region.position.x, tile.region.position.z + 1].tiles[tile.position.x, 0].environment != null )
-						{
-							
-							if ( tile.region.world.regions[tile.region.position.x, tile.region.position.z + 1].tiles[tile.position.x, 0].environment.name == "Water" )
-							{
-							
-								tile.region.world.regions[tile.region.position.x, tile.region.position.z + 1].tiles[tile.position.x, 0].tileObject.renderer.material.color = Color.green;
-							}
-						}
-					}
-				}*/
-			}
+		Environment shore;
+		if ( !worldManager.world.environments.environmentList.TryGetValue ( "Shore", out shore ))
+		{
 
-			
-			return 0;
+			return 1;
 		}
 		
-		UnityEngine.Debug.Log ( "No environment, 'Water', could be found!" );
-		return 1;
+		
+		if ( tile.environment.name != "Water" )
+		{
+
+			if ( FindNearest ( tile, 1, "Water" ) != null )
+			{
+			
+				SetTileEnvironment ( tile, shore );
+			}
+		}
+		
+		return 0;
 	}
 	
 	
@@ -486,16 +296,22 @@ public class Generator : MonoBehaviour
 				continue;
 			}
 			
-			if ( current.position.z > tile.position.z + range )
-			{
-
-				break;
-			}
-			
-			if ( current.environment != null && current.environment.name == environmentName )
+			if ( current.environment.name == environmentName )
 			{
 				
 				nearestTile = current;
+				break;
+			}
+			
+			/*int tLocalOrigin = tile.globalPosition.z - range;
+			int tLocalRegion = tLocalOrigin / tile.region.world.regionDimensions.z;
+			int tLocalTile = tLocalOrigin % tile.region.world.regionDimensions.z;
+		
+			UnityEngine.Debug.Log ( tLocalOrigin + ", " + tLocalRegion + ", " + tLocalTile );*/
+			
+			if ( current.globalPosition.z <= tile.globalPosition.z - range )
+			{
+
 				break;
 			}
 			
@@ -505,8 +321,6 @@ public class Generator : MonoBehaviour
 			queue.Enqueue ( current.Left );
 			queue.Enqueue ( current.Right );
 			queue.Enqueue ( current.Bottom );
-			
-			tileQueue.Enqueue ( current );
 		}
 		
 		return nearestTile;
@@ -638,6 +452,8 @@ public class Generator : MonoBehaviour
 		tile.region = newRegion;
 		tile.position = new Int2D ( tileXIndex, tileYIndex );
 		
+		tile.environment = defaultEnvironment;
+		
 		tile.region.tiles [tileXIndex, tileYIndex] = tile;
 		tileQueue.Enqueue ( tile );
 		return tile;
@@ -671,7 +487,7 @@ public class Generator : MonoBehaviour
 		
 		float[,] pixels = new float [ perlinWidth, perlinHeight ];
 		
-		float scale = 3.0f;
+		float scale = 2.2f;
 
 		float y = 0;
 		while ( y < perlinHeight )

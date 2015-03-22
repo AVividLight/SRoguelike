@@ -112,6 +112,15 @@ public class Tile
 	
 	public Region region;
 	public Int2D position;
+	public Int2D globalPosition
+	{
+		
+		get
+		{
+			
+			return new Int2D (( region.position.x * region.world.regionDimensions.x ) + position.x, ( region.position.z * region.world.regionDimensions.z ) + position.z );
+		}
+	}
 	
 	public Tile Top
 	{
@@ -224,21 +233,16 @@ public class EnvironmentsMeta
 public class Environment : IEquatable <Environment>
 {
 	
-	public String name;
+	public String name = "Default";
 
-	public float baseColourRed;
-	public float baseColourGreen;
-	public float baseColourBlue;
+	public float baseColourRed = 0.000f;
+	public float baseColourGreen = 0.000f;
+	public float baseColourBlue = 0.000f;
 	
 	public Walkable walkable = new Walkable ();
 	
 	public Climate climate = new Climate ();
 	
-	/*public static Environment operator == ( Environment e1, String e2 ) 
-	{
-		
-		return new bool ( e1.name == e2, e1.name != e2 );
-	}*/
 	
 	public bool Equals ( Environment other )
 	{

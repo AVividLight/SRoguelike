@@ -23,8 +23,8 @@ public class TestGenerator : MonoBehaviour
 		selfIllumDiffuse = new Material ( Shader.Find ( "Self-Illumin/Diffuse" )); 
 		
 		tempWorld = GenerateWorld ( 0, 0, 8, 6, 8, 8 );
-		Tile testingTile = FindNearest ( tempWorld.regions[2, 2].tiles[4, 3], 3, "Water" );
-		InvokeRepeating ( "SlowUpdate", 1, 0.5f );
+		Tile testingTile = FindNearest ( tempWorld.regions[2, 2].tiles[4, 3], 8, "Water" );
+		InvokeRepeating ( "SlowUpdate", 1, 0.05f );
 	}
 	
 	
@@ -104,6 +104,14 @@ public class TestGenerator : MonoBehaviour
 		Queue<Tile> queue = new Queue<Tile> ();
 		queue.Enqueue ( tile );
 		
+		UnityEngine.Debug.Log ( tile.position.AsString () + " + " + tile.region.position.AsString () + " : " + tile.globalPosition.AsString ());
+		
+		int tLocalOrigin = tile.globalPosition.z - range;
+		int tLocalRegion = tLocalOrigin / tile.region.world.regionDimensions.z;
+		int tLocalTile = tLocalOrigin % tile.region.world.regionDimensions.z;
+		
+		UnityEngine.Debug.Log ( tLocalOrigin + ", " + tLocalRegion + ", " + tLocalTile );
+		
 		while ( queue.Count > 0 )
 		{
 			
@@ -114,11 +122,13 @@ public class TestGenerator : MonoBehaviour
 				continue;
 			}
 			
-			if ( current.position.z > tile.position.z + range )
+			
+			
+			/*if ( current.position.z <= tile.position.z - range )
 			{
 
 				break;
-			}
+			}*/
 			
 			visitedTiles.Add ( current.position );
 

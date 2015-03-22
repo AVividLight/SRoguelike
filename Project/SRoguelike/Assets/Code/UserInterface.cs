@@ -297,7 +297,7 @@ public class UserInterface : MonoBehaviour
 		GUILayout.FlexibleSpace ();
 		GUILayout.EndHorizontal ();
 		
-		GUI.Label ( new Rect ( 5, Screen.height - 45, Screen.width - 10, 40 ), "Development Build 15030401", labelLeftLargeStyle );
+		GUI.Label ( new Rect ( 5, Screen.height - 45, Screen.width - 10, 40 ), "Development Build 15030211", labelLeftLargeStyle );
 	}
 	
 	
