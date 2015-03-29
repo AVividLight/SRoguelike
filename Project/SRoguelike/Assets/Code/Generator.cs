@@ -47,11 +47,11 @@ public class Generator : MonoBehaviour
 
 						loadingInformation = "Creating " + ( tileQueue.Count () - 1 ) + " tiles.";
 							
-						if ( CreateTileObject ( tileQueue.Peek ()) != 0 )
+						/*if ( CreateTileObject ( tileQueue.Peek ()) != 0 )
 						{
 							
 							UnityEngine.Debug.Log ( "Unable to create tile object, " + tileQueue.Peek ().name );
-						}
+						}*/
 						
 						tileQueue.Dequeue ();
 					} else {
@@ -185,7 +185,7 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private int CreateTileObject ( Tile tile )
+	/*private int CreateTileObject ( Tile tile )
 	{
 		
 		GameObject newTile = GameObject.CreatePrimitive ( PrimitiveType.Plane );
@@ -203,7 +203,7 @@ public class Generator : MonoBehaviour
 		tile.tileObject = newTile;
 		
 		return 0;
-	}
+	}*/
 	
 	
 	private int CreateWater ( Tile tile )
@@ -330,7 +330,7 @@ public class Generator : MonoBehaviour
 	{
 		
 		tile.environment = environment;
-		tile.tileObject.renderer.material.color = GetTileColour ( tile );
+		//tile.tileObject.renderer.material.color = GetTileColour ( tile );
 	}
 	
 	

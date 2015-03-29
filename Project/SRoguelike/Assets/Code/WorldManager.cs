@@ -10,6 +10,8 @@ public class World
 {
 	
 	public GameObject worldObject;
+	
+	public Texture2D worldMap;
 	public Int2D worldDimensions = new Int2D ();
 	
 	public Environments environments;
@@ -17,8 +19,6 @@ public class World
 	
 	public Region[,] regions;
 	public Int2D regionDimensions = new Int2D ();
-	
-	//public Tile[,] tiles;
 	
 	public World ( int argWorldWidth, int argWorldHeight, int argRegionWidth, int argRegionHeight )
 	{
@@ -122,15 +122,13 @@ public class Tile
 		}
 		
 		/*
-		
 		Convert Global to Local (if it's ever needed)
 		
-			int tLocalOrigin = tile.globalPosition.z - range;
-			int tLocalRegion = tLocalOrigin / tile.region.world.regionDimensions.z;
-			int tLocalTile = tLocalOrigin % tile.region.world.regionDimensions.z;
-	    	
-			UnityEngine.Debug.Log ( tLocalOrigin + ", " + tLocalRegion + ", " + tLocalTile );
-		
+		int tLocalOrigin = tile.globalPosition.z - range;
+		int tLocalRegion = tLocalOrigin / tile.region.world.regionDimensions.z;
+		int tLocalTile = tLocalOrigin % tile.region.world.regionDimensions.z;
+	    
+		UnityEngine.Debug.Log ( tLocalOrigin + ", " + tLocalRegion + ", " + tLocalTile );
 		*/
 	}
 	
@@ -219,10 +217,12 @@ public class Tile
 		}
 	}
 	
-	public GameObject tileObject;
-	public bool walkable { get; set; }
+	//public GameObject tileObject;
 	
+	public Color[,] pixels;
 	public Environment environment;
+	
+	public bool walkable { get; set; }
 }
 
 
