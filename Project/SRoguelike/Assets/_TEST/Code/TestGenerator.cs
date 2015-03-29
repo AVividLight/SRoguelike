@@ -23,8 +23,8 @@ public class TestGenerator : MonoBehaviour
 		selfIllumDiffuse = new Material ( Shader.Find ( "Self-Illumin/Diffuse" )); 
 		
 		tempWorld = GenerateWorld ( 0, 0, 8, 6, 8, 8 );
-		FindNearest ( tempWorld.regions[2, 2].tiles[4, 3], 3, "Water" );
-		InvokeRepeating ( "SlowUpdate", 1, 0.05f );
+		FindNearest ( tempWorld.regions[0, 5].tiles[4, 5], 5, "Water" );
+		InvokeRepeating ( "SlowUpdate", 1, 0.5f );
 	}
 	
 	
@@ -97,38 +97,36 @@ public class TestGenerator : MonoBehaviour
 	
 	private Tile FindNearest ( Tile tile, int range, String environmentName )
 	{
-		
-		Tile nearestTile = null;
 		List<Int2D> visitedTiles = new List<Int2D> ();
 		
 		Queue<Tile> queue = new Queue<Tile> ();
 		queue.Enqueue ( tile );
 		
-		UnityEngine.Debug.Log ( tile.position.AsString () + " + " + tile.region.position.AsString () + " : " + tile.globalPosition.AsString ());
-		
-		int tLocalOrigin = tile.globalPosition.z - range;
-		int tLocalRegion = tLocalOrigin / tile.region.world.regionDimensions.z;
-		int tLocalTile = tLocalOrigin % tile.region.world.regionDimensions.z;
-		
-		UnityEngine.Debug.Log ( tLocalOrigin + ", " + tLocalRegion + ", " + tLocalTile );
+		int area = Mathf.CeilToInt ( Mathf.Pow (( range*2 ) + 1, 2 ) / 2 );
 		
 		while ( queue.Count > 0 )
 		{
 			
 			Tile current = queue.Dequeue ();
-			if ( current == null || visitedTiles.Contains ( current.position ))
+			if ( current == null )
+			{
+				
+				area -= 1;
+				continue;
+			}
+			
+			if ( visitedTiles.Contains ( current.position ))
 			{
 				
 				continue;
 			}
-			
-			if ( current.globalPosition.z > tile.globalPosition.z + range )
+
+			visitedTiles.Add ( current.position );
+			if ( visitedTiles.Count () >= area )
 			{
 
 				break;
 			}
-			
-			visitedTiles.Add ( current.position );
 
 			queue.Enqueue ( current.Top );
 			queue.Enqueue ( current.Left );
@@ -138,7 +136,9 @@ public class TestGenerator : MonoBehaviour
 			tileQueue.Enqueue ( current );
 		}
 		
-		return nearestTile;
+		UnityEngine.Debug.Log ( "All tiles visited: " + visitedTiles.Count () + " All tiles added " + visitedTiles.Count ());
+		
+		return null;
 	}
 	
 	

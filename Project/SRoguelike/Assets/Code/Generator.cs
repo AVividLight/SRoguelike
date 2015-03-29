@@ -280,17 +280,24 @@ public class Generator : MonoBehaviour
 	private Tile FindNearest ( Tile tile, int range, String environmentName )
 	{
 		
-		Tile nearestTile = null;
 		List<Int2D> visitedTiles = new List<Int2D> ();
 		
 		Queue<Tile> queue = new Queue<Tile> ();
 		queue.Enqueue ( tile );
 		
+		int tilesToVisit = Mathf.CeilToInt ( Mathf.Pow (( range*2 )+1, 2 )/2 );
 		while ( queue.Count > 0 )
 		{
 			
 			Tile current = queue.Dequeue ();
-			if ( current == null || visitedTiles.Contains ( current.position ))
+			if ( current == null )
+			{
+				
+				tilesToVisit -= 1;
+				continue;
+			}
+			
+			if ( visitedTiles.Contains ( current.position ))
 			{
 				
 				continue;
@@ -299,17 +306,15 @@ public class Generator : MonoBehaviour
 			if ( current.environment.name == environmentName )
 			{
 				
-				nearestTile = current;
-				break;
+				return current;
 			}
 			
-			if ( current.globalPosition.z > tile.globalPosition.z + range )
+			visitedTiles.Add ( current.position );
+			if ( visitedTiles.Count () >= tilesToVisit )
 			{
 
 				break;
 			}
-			
-			visitedTiles.Add ( current.position );
 
 			queue.Enqueue ( current.Top );
 			queue.Enqueue ( current.Left );
@@ -317,7 +322,7 @@ public class Generator : MonoBehaviour
 			queue.Enqueue ( current.Bottom );
 		}
 		
-		return nearestTile;
+		return null;
 	}
 	
 	
