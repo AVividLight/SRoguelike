@@ -101,6 +101,7 @@ public class Region
 	
 	public GameObject regionObject;
 	
+	public Int2D tileSize;
 	public Tile[,] tiles;
 }
 
@@ -369,12 +370,11 @@ public class WorldManager : MonoBehaviour
 	}
 	
 	
-	internal void CreateNewWorld ( int worldWidth, int worldHeight, int regionWidth, int regionHeight )
+	internal void CreateNewWorld ( Int2D worldSize, Int2D regionSize, Int2D tileSize )
 	{
 
-		float xSeed = UnityEngine.Random.Range ( 0.00f, 1.00f );
-		float ySeed = UnityEngine.Random.Range ( 0.00f, 1.00f );
+		Vector2 seed = new Vector2 ( UnityEngine.Random.Range ( 0.00f, 1.00f ), UnityEngine.Random.Range ( 0.00f, 1.00f ));
 		
-		world = generator.GenerateWorld ( xSeed, ySeed, worldWidth, worldHeight, regionWidth, regionHeight );
+		world = generator.GenerateWorld ( seed, worldSize, regionSize, tileSize );
 	}
 }

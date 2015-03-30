@@ -265,7 +265,7 @@ public class GameManager : MonoBehaviour
 		{
 			
 			userInterface.currentGUI = 4;
-			StartGame ( 8, 6, 8, 8 );
+			StartGame ( new Int2D ( 8, 6 ), new Int2D ( 8, 8 ), new Int2D ( 6, 6 ));
 			return;
 		}
 		
@@ -282,9 +282,9 @@ public class GameManager : MonoBehaviour
 	}
 
 
-	internal void StartGame ( int worldWidth, int worldHeight, int regionWidth, int regionHeight )
+	internal void StartGame ( Int2D worldSize, Int2D regionSize, Int2D tileSize )
 	{
 	
-		worldManager.CreateNewWorld ( worldWidth, worldHeight, regionWidth, regionHeight );
+		worldManager.CreateNewWorld ( worldSize, regionSize, tileSize );
 	}
 }

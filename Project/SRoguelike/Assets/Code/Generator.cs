@@ -206,6 +206,36 @@ public class Generator : MonoBehaviour
 	}*/
 	
 	
+	private Mesh NewPlaneMesh ( Vector2 size )
+	{
+		
+		Mesh newMesh = new Mesh();
+		newMesh.name = "Plane";
+		newMesh.vertices = new Vector3[]
+		{
+			
+			new Vector3 ( -size.x, -size.y, 0.01f ),
+			new Vector3 ( size.x, -size.y, 0.01f ),
+			new Vector3 ( size.x, size.y, 0.01f ),
+			new Vector3 ( -size.x, size.y, 0.01f )
+		};
+		
+		newMesh.uv = new Vector2[]
+		{
+			
+			new Vector2 ( 0, 0 ),
+			new Vector2 ( 0, 1 ),
+			new Vector2 ( 1, 1 ),
+			new Vector2 ( 1, 0 )
+		};
+		
+		newMesh.triangles = new int[] { 0, 1, 2, 0, 2, 3};
+		newMesh.RecalculateNormals();
+   		
+		return newMesh;
+	}
+	
+	
 	private int CreateWater ( Tile tile )
 	{
 		
@@ -334,17 +364,19 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	public World GenerateWorld ( float xSeed, float ySeed, int worldWidth, int worldHeight, int regionWidth, int regionHeight )
+	public World GenerateWorld ( Vector2 seed, Int2D worldSize, Int2D regionSize, Int2D tileSize )
 	{
 			
-		World newWorld = new World ( worldWidth, worldHeight, regionWidth, regionHeight );
+		World newWorld = new World ( worldSize.x, worldSize.z, regionSize.x, regionSize.z );
 		
 		GameObject newWorldObject = new GameObject ();
 		newWorldObject.transform.parent = gameObject.transform;
 		newWorldObject.name = "NewWorld";
 		newWorld.worldObject = newWorldObject;
 		
-		newWorld.worldPerlin = GeneratePerlinNoise ( xSeed, ySeed, regionWidth * worldWidth, regionHeight * worldHeight );
+		newWorld.worldMap = new Texture2D (( tileSize.x * regionSize.x ) * worldSize.x, ( tileSize.z * regionSize.z ) * worldSize.z );
+		
+		newWorld.worldPerlin = GeneratePerlinNoise ( seed, new Int2D (( tileSize.x * regionSize.x ) * worldSize.x, ( tileSize.z * regionSize.z ) * worldSize.z ));
 		newWorld.environments = GetEnvironments ();
 		
 		newWorld.regions = CreateRegions ( newWorld );
@@ -369,52 +401,62 @@ public class Generator : MonoBehaviour
 		
 		Region[,] newRegions = new Region[newWorld.worldDimensions.x, newWorld.worldDimensions.z];
 		
-		int regionYIndex = 0;
-		while ( regionYIndex < newWorld.worldDimensions.z )
+		Int2D regionIndex = new Int2D ( 0, 0 );
+		while ( regionIndex.z < newWorld.worldDimensions.z )
 		{
 			
-			int regionXIndex = 0;
-			while ( regionXIndex < newWorld.worldDimensions.x )
+			regionIndex.x = 0;
+			while ( regionIndex.x < newWorld.worldDimensions.x )
 			{
 				
-				newRegions [ regionXIndex, regionYIndex ] = GenerateRegion ( newWorld, regionXIndex, regionYIndex );
-				regionXIndex += 1;
+				newRegions [ regionIndex.x, regionIndex.z ] = GenerateRegion ( newWorld, regionIndex );
+				regionIndex.x += 1;
 			}
 			
-			regionYIndex += 1;
+			regionIndex.z += 1;
 		}
 		
 		return newRegions;
 	}
 	
 	
-	private Region GenerateRegion ( World newWorld, int regionXIndex, int regionYIndex )
+	private Region GenerateRegion ( World newWorld, Int2D regionIndex )
 	{
 		
 		Region newRegion = new Region ();
 		newRegion.world = newWorld;
-		newRegion.position = new Int2D ( regionXIndex, regionYIndex );
-		
-		GameObject newRegionObject = GameObject.CreatePrimitive ( PrimitiveType.Plane );
-		
-		newRegionObject.name = "Region" + regionXIndex + "," + regionYIndex;
-		newRegionObject.collider.enabled = false;
-		
-		newRegionObject.transform.localScale = new Vector3 ( newWorld.regionDimensions.x * 0.1f, 1, newWorld.regionDimensions.z * 0.1f );
-		newRegionObject.transform.position = new Vector3 (( newWorld.regionDimensions.x * regionXIndex ) + newWorld.regionDimensions.x/2 - 0.5f /* 0.5f = Tile Width/2 */, 0, ( newWorld.regionDimensions.z * regionYIndex ) + newWorld.regionDimensions.z/2 - 0.5f /* 0.5f = Tile Height/2 */ );
-		newRegionObject.transform.parent = newWorld.worldObject.transform;
-		
-		newRegion.regionObject = newRegionObject;
+		newRegion.position = regionIndex;
+		newRegion.regionObject = GenerateRegionObject ( newRegion );
 		newRegion.tiles = new Tile[newWorld.regionDimensions.x, newWorld.regionDimensions.z];
 		
 		//if ( regionXIndex == Player.player.position.x && regionYIndex == Player.player.position.z )
 		//{
 			
 			newRegion.tiles = CreateTiles ( newRegion );
-			newRegion.regionObject.GetComponent<MeshRenderer> ().enabled = false;
+			//newRegion.regionObject.GetComponent<MeshRenderer> ().enabled = false;
 		//}
 		
 		return newRegion;
+	}
+	
+	
+	private GameObject GenerateRegionObject ( Region region )
+	{
+		
+		GameObject newRegionObject = new GameObject ();
+		newRegionObject.name = "Region" + region.position.x + "," + region.position.z;
+		
+		MeshFilter meshFilter = ( MeshFilter ) newRegionObject.AddComponent ( typeof ( MeshFilter ));
+		meshFilter.mesh = NewPlaneMesh ( new Vector2 ( 4, 4 ));
+		
+		MeshRenderer renderer = newRegionObject.AddComponent ( typeof ( MeshRenderer )) as MeshRenderer;
+		renderer.material = selfIllumDiffuse;
+
+		newRegionObject.transform.position = new Vector3 (( region.world.regionDimensions.x * region.position.x ) + region.world.regionDimensions.x/2 - 0.5f /* 0.5f = Tile Width/2 */, 0, ( region.world.regionDimensions.z * region.position.z ) + region.world.regionDimensions.z/2 - 0.5f /* 0.5f = Tile Height/2 */ );
+		newRegionObject.transform.parent = region.world.worldObject.transform;
+		newRegionObject.transform.Rotate ( 270, 0, 0 );
+		
+		return newRegionObject;
 	}
 	
 	
@@ -481,23 +523,23 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private float[,] GeneratePerlinNoise ( float xSeed, float ySeed, int perlinWidth, int perlinHeight )
+	private float[,] GeneratePerlinNoise ( Vector2 seed, Int2D perlinSize )
 	{
 		
-		float[,] pixels = new float [ perlinWidth, perlinHeight ];
+		float[,] pixels = new float [ perlinSize.x, perlinSize.z ];
 		
 		float scale = 2.2f;
 
 		float y = 0;
-		while ( y < perlinHeight )
+		while ( y < perlinSize.z )
 		{
 			
 			float x = 0;
-			while ( x < perlinWidth )
+			while ( x < perlinSize.x )
 			{
 				
-		    	float xCoordinate = xSeed + x / perlinWidth * scale;
-		    	float yCoordinate = ySeed + y / perlinHeight * scale;
+		    	float xCoordinate = seed.x + x / perlinSize.x * scale;
+		    	float yCoordinate = seed.y + y / perlinSize.z * scale;
 		    	float perlin = Mathf.PerlinNoise ( xCoordinate, yCoordinate );
 				
 				pixels [Convert.ToInt32 ( x ), Convert.ToInt32 ( y )] = perlin;
