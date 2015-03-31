@@ -14,17 +14,17 @@ public class Generator : MonoBehaviour
 	static internal string loadingInformation;
 	private sbyte loadingStage = -1;
 	
-	private Material selfIllumDiffuse;
+	private Shader selfIllumDiffuse;
 	private Environment defaultEnvironment = new Environment ();
 
-	private Queue<Tile> tileQueue = new Queue<Tile> ();
+	private Queue<Region> loadingRegionQueue = new Queue<Region> ();
 	
 	
 	private void Start ()
 	{
 		
 		worldManager = GameObject.FindGameObjectWithTag ( "WorldManager" ).GetComponent<WorldManager> ();
-		selfIllumDiffuse = new Material ( Shader.Find ( "Self-Illumin/Diffuse" )); 
+		selfIllumDiffuse = Shader.Find ( "Self-Illumin/Diffuse" ); 
 	}
 	
 	
@@ -38,61 +38,93 @@ public class Generator : MonoBehaviour
 			{
 				
 				case 0:
-				int newTilesPerFrame = 0;
-				while ( newTilesPerFrame < ( worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z ) * 1 )
 				{
-			
-					if ( tileQueue.Count > 0 )
+					
+					if ( loadingRegionQueue.Count () == 0 )
 					{
-
-						loadingInformation = "Creating " + ( tileQueue.Count () - 1 ) + " tiles.";
-							
-						/*if ( CreateTileObject ( tileQueue.Peek ()) != 0 )
-						{
-							
-							UnityEngine.Debug.Log ( "Unable to create tile object, " + tileQueue.Peek ().name );
-						}*/
 						
-						tileQueue.Dequeue ();
-					} else {
-							
-						RepopulateTileQueue ();
-						loadingStage = 1;
-						break;
+						RepopulateRegionQueue ();
 					}
 					
-					newTilesPerFrame += 1;
+					int regionsThisFrame = 0;
+					while ( regionsThisFrame < 1 )
+					{
+                	
+						int totalToLoad = loadingRegionQueue.Count ();
+						if ( totalToLoad > 0 )
+						{
+							
+							
+							string singularOrPlural = "s";
+							if ( totalToLoad - 1 == 1 )
+							{
+								
+								singularOrPlural = "";
+							}
+							
+							loadingInformation = "Creating " + ( totalToLoad - 1 ) + " region" + singularOrPlural + ".";
+						
+							Region currentRegion = loadingRegionQueue.Dequeue ();
+							currentRegion.regionObject = CreateRegionObject ( currentRegion );
+						}
+						
+						if ( loadingRegionQueue.Count () == 0 )
+						{
+                	
+							loadingStage = 1;
+							break;
+						}
+						
+						regionsThisFrame += 1;
+					}
 				}
 				break;
 				
 				case 1:
-				int tileWaterPerFrame = 0;
-				while ( tileWaterPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z )
 				{
-			
-					if ( tileQueue.Count () > 0 )
+					
+					if ( loadingRegionQueue.Count () == 0 )
 					{
 						
-						loadingInformation = "Analysing " + ( tileQueue.Count () - 1 ) + " tiles for water.";
-						
-						if ( CreateWater ( tileQueue.Peek ()) != 0 )
-						{
-							
-							UnityEngine.Debug.Log ( "Unable to create environment, " + tileQueue.Peek ().name );
-						}
-						
-						tileQueue.Dequeue ();
-					} else {
-							
-						RepopulateTileQueue ();
-						loadingStage = 2;
-						break;
+						RepopulateRegionQueue ();
 					}
 					
-					tileWaterPerFrame += 1;
+					int regionsThisFrame = 0;
+					while ( regionsThisFrame < 1 )
+					{
+                	
+						int totalToLoad = loadingRegionQueue.Count ();
+						if ( totalToLoad > 0 )
+						{
+							
+							
+							string singularOrPlural = "s";
+							if ( totalToLoad - 1 == 1 )
+							{
+								
+								singularOrPlural = "";
+							}
+							
+							loadingInformation = "Analysing " + ( totalToLoad - 1 ) + " region" + singularOrPlural + " for water.";
+						
+							Region currentRegion = loadingRegionQueue.Dequeue ();
+							currentRegion.map = CreateWater ( currentRegion );
+							UpdateTexture ( currentRegion.map );
+						}
+						
+						if ( loadingRegionQueue.Count () == 0 )
+						{
+                	
+							loadingStage = 2;
+							break;
+						}
+						
+						regionsThisFrame += 1;
+					}
 				}
 				break;
 				
+				/*
 				case 2:
 				int tileGrassPerFrame = 0;
 				while ( tileGrassPerFrame < worldManager.world.regionDimensions.x * worldManager.world.regionDimensions.z * 1 )
@@ -146,16 +178,38 @@ public class Generator : MonoBehaviour
 				break;
 				
 				default:
-				break;
+				break;*/
 			}
 		}
 	}
 	
 	
-	private void RepopulateTileQueue ()
+	private void RepopulateRegionQueue ()
 	{
 		
-		tileQueue = new Queue<Tile> ();
+		loadingRegionQueue = new Queue<Region> ();
+		
+		Int2D regionIndex = new Int2D ( 0, 0 );
+		while ( regionIndex.z < worldManager.world.worldDimensions.z )
+		{
+			
+			regionIndex.x = 0;
+			while ( regionIndex.x < worldManager.world.worldDimensions.x )
+			{
+				
+				loadingRegionQueue.Enqueue ( worldManager.world.regions[regionIndex.x, regionIndex.z] );
+				regionIndex.x += 1;
+			}
+			
+			regionIndex.z += 1;
+		}
+	}
+	
+	
+	/*private void RepopulateTileQueue ()
+	{
+		
+		//tileQueue = new Queue<Tile> ();
 		
 		int regionYIndex = 0;
 		while ( regionYIndex < worldManager.world.worldDimensions.z )
@@ -173,7 +227,7 @@ public class Generator : MonoBehaviour
 	   				while ( tileXIndex < worldManager.world.regionDimensions.x )
 	   				{
 					
-	   					tileQueue.Enqueue ( worldManager.world.regions[regionXIndex, regionYIndex].tiles[tileXIndex, tileYIndex] );
+	   					//tileQueue.Enqueue ( worldManager.world.regions[regionXIndex, regionYIndex].tiles[tileXIndex, tileYIndex] );
 	   					tileXIndex += 1;
 	   				}
 	   				tileYIndex += 1;
@@ -182,28 +236,28 @@ public class Generator : MonoBehaviour
 			}
 			regionYIndex += 1;
 		}
-	}
+	}*/
 	
 	
-	/*private int CreateTileObject ( Tile tile )
+	private GameObject CreateRegionObject ( Region region )
 	{
 		
-		GameObject newTile = GameObject.CreatePrimitive ( PrimitiveType.Plane );
+		GameObject newRegionObject = new GameObject ();
+		newRegionObject.name = "Region" + region.position.x + "," + region.position.z;
 		
-		newTile.name = tile.name;
-		newTile.collider.enabled = false;
-	
-		newTile.transform.localScale = new Vector3 ( 0.1f, 1, 0.1f );
-		newTile.transform.localPosition = new Vector3 (( tile.region.position.x * tile.region.world.regionDimensions.x ) + tile.position.x, 1, ( tile.region.position.z * tile.region.world.regionDimensions.z ) + tile.position.z );
-		newTile.transform.parent = tile.region.regionObject.transform;
-	
-		newTile.renderer.material = selfIllumDiffuse;
-		newTile.renderer.material.color = Color.white;
+		MeshFilter meshFilter = ( MeshFilter ) newRegionObject.AddComponent ( typeof ( MeshFilter ));
+		meshFilter.mesh = NewPlaneMesh ( new Vector2 ( 4, 4 ));
 		
-		tile.tileObject = newTile;
+		MeshRenderer renderer = newRegionObject.AddComponent ( typeof ( MeshRenderer )) as MeshRenderer;
+		renderer.material.mainTexture = region.map;
+		renderer.material.shader = selfIllumDiffuse;
+
+		newRegionObject.transform.position = new Vector3 (( region.world.regionDimensions.x * region.position.x ) + region.world.regionDimensions.x/2 - 0.5f /* 0.5f = Tile Width/2 */, 0, ( region.world.regionDimensions.z * region.position.z ) + region.world.regionDimensions.z/2 - 0.5f /* 0.5f = Tile Height/2 */ );
+		newRegionObject.transform.parent = region.world.worldObject.transform;
+		newRegionObject.transform.Rotate ( 270, 0, 0 );
 		
-		return 0;
-	}*/
+		return newRegionObject;
+	}
 	
 	
 	private Mesh NewPlaneMesh ( Vector2 size )
@@ -236,7 +290,85 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private int CreateWater ( Tile tile )
+	private Texture2D CreateWater ( Region localRegion )
+	{
+		
+		Environment water;
+		if ( worldManager.world.environments.environmentList.TryGetValue ( "Water", out water ))
+		{
+		
+			Texture2D newMap = localRegion.map;
+			
+   			Int2D localTileIndex = new Int2D ( 0, 0 );
+   			while ( localTileIndex.z < worldManager.world.regionDimensions.z )
+   			{
+			
+				localTileIndex.x = 0;
+   				while ( localTileIndex.x < worldManager.world.regionDimensions.x )
+   				{
+					
+					if ( GetTilePerlin ( localRegion.tiles[localTileIndex.x, localTileIndex.z] ) < worldManager.world.environments.meta.seaLevel )
+					{
+				
+						SetTileEnvironment ( localRegion.tiles[localTileIndex.x, localTileIndex.z], water );
+					}
+					
+   					localTileIndex.x += 1;
+   				}
+				
+   				localTileIndex.z += 1;
+   			}
+			
+			return newMap;
+		}
+		
+		return null;
+	}
+	
+	
+	private void SetTileEnvironment ( Tile tile, Environment environment )
+	{
+		
+		tile.environment = environment;
+		
+		Int2D pixelIndex = new Int2D ( 0, 0 );
+		while ( pixelIndex.z < worldManager.world.tileDimensions )
+		{
+		
+			pixelIndex.x = 0;
+			while ( pixelIndex.x < worldManager.world.tileDimensions )
+			{
+				
+				tile.pixels[pixelIndex.x, pixelIndex.z] = GetTileColour ( tile );
+				
+				pixelIndex.x += 1;
+			}
+			
+			pixelIndex.z += 1;
+		}
+	}
+	
+	
+	private Color GetTileColour ( Tile tile )
+	{
+		
+		float minorVariation = UnityEngine.Random.Range ( 0.000f, 0.020f ) - 0.010f;
+		Color baseColour = new Color ( tile.environment.baseColourRed + minorVariation, tile.environment.baseColourGreen + minorVariation, tile.environment.baseColourBlue + minorVariation, 1 );
+		
+		return baseColour;
+	}
+	
+	
+	private Texture2D UpdateTexture ( Texture2D texture )
+	{
+		
+		texture.Apply ( false, false );
+		
+		return texture;
+	}
+	
+	
+	/*private int CreateWater ( Tile tile )
 	{
 		
 		Environment water;
@@ -304,7 +436,7 @@ public class Generator : MonoBehaviour
 		}
 		
 		return 0;
-	}
+	}*/
 	
 	
 	private Tile FindNearest ( Tile tile, int range, String environmentName )
@@ -356,15 +488,7 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private void SetTileEnvironment ( Tile tile, Environment environment )
-	{
-		
-		tile.environment = environment;
-		//tile.tileObject.renderer.material.color = GetTileColour ( tile );
-	}
-	
-	
-	public World GenerateWorld ( Vector2 seed, Int2D worldSize, Int2D regionSize, Int2D tileSize )
+	public World GenerateWorld ( Vector2 seed, Int2D worldSize, Int2D regionSize, int tileSize )
 	{
 			
 		World newWorld = new World ( worldSize.x, worldSize.z, regionSize.x, regionSize.z );
@@ -374,12 +498,11 @@ public class Generator : MonoBehaviour
 		newWorldObject.name = "NewWorld";
 		newWorld.worldObject = newWorldObject;
 		
-		newWorld.worldMap = new Texture2D (( tileSize.x * regionSize.x ) * worldSize.x, ( tileSize.z * regionSize.z ) * worldSize.z );
-		
-		newWorld.worldPerlin = GeneratePerlinNoise ( seed, new Int2D (( tileSize.x * regionSize.x ) * worldSize.x, ( tileSize.z * regionSize.z ) * worldSize.z ));
+		newWorld.worldPerlin = GeneratePerlinNoise ( seed, new Int2D (( tileSize * regionSize.x ) * worldSize.x, ( tileSize * regionSize.z ) * worldSize.z ));
 		newWorld.environments = GetEnvironments ();
 		
-		newWorld.regions = CreateRegions ( newWorld );
+		newWorld.tileDimensions = tileSize;
+		newWorld.regions = CreateAllRegions ( newWorld );
 		
 		loadingStage = 0;
 		return newWorld;
@@ -390,13 +513,13 @@ public class Generator : MonoBehaviour
 	{
 		
 		//Catch errors
-		Environments environments = JsonConvert.DeserializeObject<Environments>( File.ReadAllText ( System.Environment.GetFolderPath ( System.Environment.SpecialFolder.Desktop ) + Path.DirectorySeparatorChar + "Default" + Path.DirectorySeparatorChar + "Environments.json" ));
+		Environments environments = JsonConvert.DeserializeObject<Environments> ( File.ReadAllText ( System.Environment.GetFolderPath ( System.Environment.SpecialFolder.Desktop ) + Path.DirectorySeparatorChar + "Default" + Path.DirectorySeparatorChar + "Environments.json" ));
 		
 		return environments;
 	}
 	
 	
-	private Region[,] CreateRegions ( World newWorld )
+	private Region[,] CreateAllRegions ( World newWorld )
 	{
 		
 		Region[,] newRegions = new Region[newWorld.worldDimensions.x, newWorld.worldDimensions.z];
@@ -409,7 +532,7 @@ public class Generator : MonoBehaviour
 			while ( regionIndex.x < newWorld.worldDimensions.x )
 			{
 				
-				newRegions [ regionIndex.x, regionIndex.z ] = GenerateRegion ( newWorld, regionIndex );
+				newRegions [ regionIndex.x, regionIndex.z ] = CreateRegion ( newWorld, regionIndex );
 				regionIndex.x += 1;
 			}
 			
@@ -420,83 +543,73 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private Region GenerateRegion ( World newWorld, Int2D regionIndex )
+	private Region CreateRegion ( World newWorld, Int2D regionIndex )
 	{
 		
 		Region newRegion = new Region ();
 		newRegion.world = newWorld;
-		newRegion.position = regionIndex;
-		newRegion.regionObject = GenerateRegionObject ( newRegion );
+		newRegion.position = new Int2D ( regionIndex.x, regionIndex.z );
 		newRegion.tiles = new Tile[newWorld.regionDimensions.x, newWorld.regionDimensions.z];
+		newRegion.map = new Texture2D ( newRegion.world.tileDimensions * newRegion.world.regionDimensions.x, newRegion.world.tileDimensions * newRegion.world.regionDimensions.z );
 		
-		//if ( regionXIndex == Player.player.position.x && regionYIndex == Player.player.position.z )
-		//{
-			
-			newRegion.tiles = CreateTiles ( newRegion );
-			//newRegion.regionObject.GetComponent<MeshRenderer> ().enabled = false;
-		//}
+		newRegion.tiles = CreateAllTiles ( newRegion );
 		
 		return newRegion;
 	}
 	
 	
-	private GameObject GenerateRegionObject ( Region region )
-	{
-		
-		GameObject newRegionObject = new GameObject ();
-		newRegionObject.name = "Region" + region.position.x + "," + region.position.z;
-		
-		MeshFilter meshFilter = ( MeshFilter ) newRegionObject.AddComponent ( typeof ( MeshFilter ));
-		meshFilter.mesh = NewPlaneMesh ( new Vector2 ( 4, 4 ));
-		
-		MeshRenderer renderer = newRegionObject.AddComponent ( typeof ( MeshRenderer )) as MeshRenderer;
-		renderer.material = selfIllumDiffuse;
-
-		newRegionObject.transform.position = new Vector3 (( region.world.regionDimensions.x * region.position.x ) + region.world.regionDimensions.x/2 - 0.5f /* 0.5f = Tile Width/2 */, 0, ( region.world.regionDimensions.z * region.position.z ) + region.world.regionDimensions.z/2 - 0.5f /* 0.5f = Tile Height/2 */ );
-		newRegionObject.transform.parent = region.world.worldObject.transform;
-		newRegionObject.transform.Rotate ( 270, 0, 0 );
-		
-		return newRegionObject;
-	}
-	
-	
-	private Tile[,] CreateTiles ( Region newRegion )
+	private Tile[,] CreateAllTiles ( Region newRegion )
 	{
 		
 		Tile[,] newTiles = new Tile[newRegion.world.regionDimensions.x, newRegion.world.regionDimensions.z];
 		
-		int tileYIndex = 0;
-		while ( tileYIndex < newRegion.world.regionDimensions.z )
+		Int2D tileIndex = new Int2D ( 0, 0 );
+		while ( tileIndex.z < newRegion.world.regionDimensions.z )
 		{
 			
-			int tileXIndex = 0;
-			while ( tileXIndex < newRegion.world.regionDimensions.x )
+			tileIndex.x = 0;
+			while ( tileIndex.x < newRegion.world.regionDimensions.x )
 			{
 				
-				newTiles[tileXIndex, tileYIndex] = GenerateTile ( newRegion, tileXIndex, tileYIndex );
-				tileXIndex += 1;
+				newTiles[tileIndex.x, tileIndex.z] = CreateTile ( newRegion, tileIndex );
+				tileIndex.x += 1;
 			}
 			
-			tileYIndex += 1;
+			tileIndex.z += 1;
 		}
 		
 		return newTiles;
 	}
 	
 	
-	private Tile GenerateTile ( Region newRegion, int tileXIndex, int tileYIndex )
+	private Tile CreateTile ( Region newRegion, Int2D tileIndex )
 	{
 		
 		Tile tile = new Tile ();
-		tile.name = "Tile " + tileYIndex + ", " + tileXIndex;
+		tile.name = "Tile " + tileIndex.x + ", " + tileIndex.z;
 		
 		tile.region = newRegion;
-		tile.position = new Int2D ( tileXIndex, tileYIndex );
+		tile.position = new Int2D ( tileIndex.x, tileIndex.z );
 		
+		Color[,] tempColourArray = new Color[ newRegion.world.tileDimensions, newRegion.world.tileDimensions ];
+		
+		Int2D colourIndex = new Int2D ( 0, 0 );
+		while ( colourIndex.z < tempColourArray.GetLength ( 1 ))
+		{
+	
+			colourIndex.x = 0;
+			while ( colourIndex.x < tempColourArray.GetLength ( 0 ))
+			{
+				
+				tempColourArray[colourIndex.x, colourIndex.z] = Color.red;
+				colourIndex.x += 1;
+			}
+			
+			colourIndex.z += 1;
+		}
+		
+		tile.pixels = tempColourArray;
 		tile.environment = defaultEnvironment;
-		
-		tile.region.tiles [tileXIndex, tileYIndex] = tile;
-		tileQueue.Enqueue ( tile );
 		return tile;
 	}
 	
@@ -513,16 +626,6 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private Color GetTileColour ( Tile tile )
-	{
-		
-		float minorVariation = UnityEngine.Random.Range ( 0.000f, 0.020f ) - 0.010f;
-		Color baseColour = new Color ( tile.environment.baseColourRed + minorVariation, tile.environment.baseColourGreen + minorVariation, tile.environment.baseColourBlue + minorVariation, 1 );
-		
-		return baseColour;
-	}
-	
-	
 	private float[,] GeneratePerlinNoise ( Vector2 seed, Int2D perlinSize )
 	{
 		
@@ -530,65 +633,26 @@ public class Generator : MonoBehaviour
 		
 		float scale = 2.2f;
 
-		float y = 0;
-		while ( y < perlinSize.z )
+		Vector2 pos = new Vector2 ( 0, 0 );
+		while ( pos.y < perlinSize.z )
 		{
 			
-			float x = 0;
-			while ( x < perlinSize.x )
+			pos.x = 0;
+			while ( pos.x < perlinSize.x )
 			{
 				
-		    	float xCoordinate = seed.x + x / perlinSize.x * scale;
-		    	float yCoordinate = seed.y + y / perlinSize.z * scale;
+		    	float xCoordinate = seed.x + pos.x / perlinSize.x * scale;
+		    	float yCoordinate = seed.y + pos.y / perlinSize.z * scale;
 		    	float perlin = Mathf.PerlinNoise ( xCoordinate, yCoordinate );
 				
-				pixels [Convert.ToInt32 ( x ), Convert.ToInt32 ( y )] = perlin;
+				pixels [Convert.ToInt32 ( pos.x ), Convert.ToInt32 ( pos.y )] = perlin;
 				
-				x += 1;
+				pos.x += 1;
 			}
 			
-			y += 1;
+			pos.y += 1;
 		}
 		
-		//Only works for squares
-		bool createTextureObject = false;
-		if ( createTextureObject == true )
-			CreatePerlinObject ( pixels );
-		
 		return pixels;
-	}
-	
-	
-	private void CreatePerlinObject ( float[,] twoDPixels )
-	{
-		
-		Color[] texturePixelArray = new Color[twoDPixels.GetLength ( 0 ) * twoDPixels.GetLength ( 1 )];
-		
-		int pixelY = 0;
-		while ( pixelY < twoDPixels.GetLength ( 1 ))
-		{
-			
-			int pixelX = 0;
-			while ( pixelX < twoDPixels.GetLength ( 0 ))
-			{
-				
-				texturePixelArray [pixelY * twoDPixels.GetLength ( 1 ) + pixelX] = new Color ( twoDPixels[pixelX, pixelY], twoDPixels[pixelX, pixelY], twoDPixels[pixelX, pixelY], 1 );
-				pixelX += 1;
-			}
-				
-			pixelY += 1;
-		}	
-		
-		Texture2D noiseTexture = new Texture2D ( twoDPixels.GetLength ( 0 ), twoDPixels.GetLength ( 1 ) );
-		noiseTexture.SetPixels ( texturePixelArray );
-		noiseTexture.Apply ();
-		
-		GameObject perlinPlane = GameObject.CreatePrimitive ( PrimitiveType.Plane );
-		perlinPlane.transform.position = new Vector3 ( 50, 0, 12.5f );
-		perlinPlane.transform.localScale = new Vector3 ( noiseTexture.width * 0.1f, 1, noiseTexture.height * 0.1f );
-		perlinPlane.transform.eulerAngles = new Vector3 ( 0, 180, 0 );
-		perlinPlane.renderer.material = new Material ( Shader.Find ( "Self-Illumin/Diffuse" ));
-		perlinPlane.renderer.material.mainTexture = noiseTexture;
-		perlinPlane.name = "PerlinPlane";
 	}
 }

@@ -10,8 +10,6 @@ public class World
 {
 	
 	public GameObject worldObject;
-	
-	public Texture2D worldMap;
 	public Int2D worldDimensions = new Int2D ();
 	
 	public Environments environments;
@@ -19,6 +17,8 @@ public class World
 	
 	public Region[,] regions;
 	public Int2D regionDimensions = new Int2D ();
+	
+	public int tileDimensions;
 	
 	public World ( int argWorldWidth, int argWorldHeight, int argRegionWidth, int argRegionHeight )
 	{
@@ -99,10 +99,10 @@ public class Region
 		}
 	}
 	
-	public GameObject regionObject;
-	
-	public Int2D tileSize;
 	public Tile[,] tiles;
+	public Texture2D map;
+	
+	public GameObject regionObject;
 }
 
 
@@ -217,8 +217,6 @@ public class Tile
 			return region.tiles[position.x, position.z - 1];
 		}
 	}
-	
-	//public GameObject tileObject;
 	
 	public Color[,] pixels;
 	public Environment environment;
@@ -370,7 +368,7 @@ public class WorldManager : MonoBehaviour
 	}
 	
 	
-	internal void CreateNewWorld ( Int2D worldSize, Int2D regionSize, Int2D tileSize )
+	internal void CreateNewWorld ( Int2D worldSize, Int2D regionSize, int tileSize )
 	{
 
 		Vector2 seed = new Vector2 ( UnityEngine.Random.Range ( 0.00f, 1.00f ), UnityEngine.Random.Range ( 0.00f, 1.00f ));
