@@ -246,13 +246,13 @@ public class Generator : MonoBehaviour
 		newRegionObject.name = "Region" + region.position.x + "," + region.position.z;
 		
 		MeshFilter meshFilter = ( MeshFilter ) newRegionObject.AddComponent ( typeof ( MeshFilter ));
-		meshFilter.mesh = NewPlaneMesh ( new Vector2 ( 4, 4 ));
+		meshFilter.mesh = NewPlaneMesh ( new Vector2 ( region.world.regionDimensions.x / 2, region.world.regionDimensions.z / 2 ));
 		
 		MeshRenderer renderer = newRegionObject.AddComponent ( typeof ( MeshRenderer )) as MeshRenderer;
 		renderer.material.mainTexture = region.map;
 		renderer.material.shader = selfIllumDiffuse;
 
-		newRegionObject.transform.position = new Vector3 (( region.world.regionDimensions.x * region.position.x ) + region.world.regionDimensions.x/2 - 0.5f /* 0.5f = Tile Width/2 */, 0, ( region.world.regionDimensions.z * region.position.z ) + region.world.regionDimensions.z/2 - 0.5f /* 0.5f = Tile Height/2 */ );
+		newRegionObject.transform.position = new Vector3 (( region.position.x * region.world.regionDimensions.x ), 0, ( region.world.regionDimensions.z * region.position.z ) );
 		newRegionObject.transform.parent = region.world.worldObject.transform;
 		newRegionObject.transform.Rotate ( 270, 0, 0 );
 		
@@ -297,7 +297,7 @@ public class Generator : MonoBehaviour
 		if ( worldManager.world.environments.environmentList.TryGetValue ( "Water", out water ))
 		{
 		
-			Texture2D newMap = localRegion.map;
+			Color[,] newTexture = new Color[ localRegion.world.tileDimensions * localRegion.world.regionDimensions.x, localRegion.world.tileDimensions * localRegion.world.regionDimensions.z ];
 			
    			Int2D localTileIndex = new Int2D ( 0, 0 );
    			while ( localTileIndex.z < worldManager.world.regionDimensions.z )
@@ -313,13 +313,16 @@ public class Generator : MonoBehaviour
 						SetTileEnvironment ( localRegion.tiles[localTileIndex.x, localTileIndex.z], water );
 					}
 					
+					Int2D offset = new Int2D ( localRegion.tiles[localTileIndex.x, localTileIndex.z].position.x * localRegion.world.tileDimensions, localRegion.tiles[localTileIndex.x, localTileIndex.z].position.z * localRegion.world.tileDimensions );
+					UnityEngine.Debug.Log ( "Offset: " + offset.AsString ());
+					
    					localTileIndex.x += 1;
    				}
 				
    				localTileIndex.z += 1;
    			}
 			
-			return newMap;
+			return null; //RETURN TEXTURE!!!
 		}
 		
 		return null;

@@ -265,7 +265,7 @@ public class GameManager : MonoBehaviour
 		{
 			
 			userInterface.currentGUI = 4;
-			StartGame ( new Int2D ( 8, 6 ), new Int2D ( 8, 8 ), 1 );
+			StartGame ( new Int2D ( 8, 6 ), new Int2D ( 8, 8 ), 4 );
 			return;
 		}
 		
