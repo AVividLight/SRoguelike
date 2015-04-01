@@ -290,6 +290,68 @@ public class Generator : MonoBehaviour
 	}
 	
 	
+	/*public static T[] FlattenArray<T> ( T[,] twoDArray ) where T : class
+	{
+		
+		if ( twoDArray != null )
+		{
+			
+			T[] oneDArray = new T[twoDArray.GetLength ( 0 )  * twoDArray.GetLength ( 1 )];
+		
+			Int2D arrayIndex = new Int2D ( 0, 0 );
+			while ( arrayIndex.z < twoDArray.GetLength ( 1 ))
+			{
+			
+				arrayIndex.x = 0;
+				while ( arrayIndex.x < twoDArray.GetLength ( 0 ))
+				{
+				
+					oneDArray[(arrayIndex.z * twoDArray.GetLength ( 0 )) + arrayIndex.x] = ( twoDArray [arrayIndex.x, arrayIndex.z] );
+					arrayIndex.x += 1;
+				}
+			
+				arrayIndex.z += 1;
+			}
+			
+			return oneDArray;
+		}
+	
+		UnityEngine.Debug.LogError ( "The Original Array is Null!" );
+		return null;
+	}*/
+	
+	
+	private Color[] FlattenColourArray ( Color[,] twoDArray )
+	{
+		
+		if ( twoDArray != null )
+		{
+			
+			Color[] oneDArray = new Color[twoDArray.GetLength ( 0 )  * twoDArray.GetLength ( 1 )];
+		
+			Int2D arrayIndex = new Int2D ( 0, 0 );
+			while ( arrayIndex.z < twoDArray.GetLength ( 1 ))
+			{
+			
+				arrayIndex.x = 0;
+				while ( arrayIndex.x < twoDArray.GetLength ( 0 ))
+				{
+				
+					oneDArray[(arrayIndex.z * twoDArray.GetLength ( 0 )) + arrayIndex.x] = ( twoDArray [arrayIndex.x, arrayIndex.z] );
+					arrayIndex.x += 1;
+				}
+			
+				arrayIndex.z += 1;
+			}
+			
+			return oneDArray;
+		}
+	
+		UnityEngine.Debug.LogError ( "The Original Array is Null!" );
+		return null;
+	}
+	
+	
 	private Texture2D CreateWater ( Region localRegion )
 	{
 		
@@ -297,7 +359,7 @@ public class Generator : MonoBehaviour
 		if ( worldManager.world.environments.environmentList.TryGetValue ( "Water", out water ))
 		{
 		
-			Color[,] newTexture = new Color[ localRegion.world.tileDimensions * localRegion.world.regionDimensions.x, localRegion.world.tileDimensions * localRegion.world.regionDimensions.z ];
+			Color[,] newTextureColours = new Color[ localRegion.world.tileSize * localRegion.world.regionDimensions.x, localRegion.world.tileSize * localRegion.world.regionDimensions.z ];
 			
    			Int2D localTileIndex = new Int2D ( 0, 0 );
    			while ( localTileIndex.z < worldManager.world.regionDimensions.z )
@@ -313,8 +375,16 @@ public class Generator : MonoBehaviour
 						SetTileEnvironment ( localRegion.tiles[localTileIndex.x, localTileIndex.z], water );
 					}
 					
-					Int2D offset = new Int2D ( localRegion.tiles[localTileIndex.x, localTileIndex.z].position.x * localRegion.world.tileDimensions, localRegion.tiles[localTileIndex.x, localTileIndex.z].position.z * localRegion.world.tileDimensions );
-					UnityEngine.Debug.Log ( "Offset: " + offset.AsString ());
+					Int2D offset = new Int2D ( localRegion.tiles[localTileIndex.x, localTileIndex.z].position.x * localRegion.world.tileSize, localRegion.tiles[localTileIndex.x, localTileIndex.z].position.z * localRegion.world.tileSize );
+					foreach ( Color localColour in localRegion.tiles[localTileIndex.x, localTileIndex.z].pixels )
+					{
+						
+						//UnityEngine.Debug.Log ( "L x " + newTextureColours.GetLength ( 0 ) + " z " + newTextureColours.GetLength ( 1 ));
+						//UnityEngine.Debug.Log ( "I x " + localTileIndex.x + " z " + localTileIndex.z );
+						//UnityEngine.Debug.Log ( "O x " + offset.x + " z " + offset.z );
+						//UnityEngine.Debug.Log ( "C x " + ( localTileIndex.x + offset.x ) + " z " + ( localTileIndex.z + offset.z ));
+						newTextureColours[offset.x, offset.z] = Color.red; //localColour;
+					}
 					
    					localTileIndex.x += 1;
    				}
@@ -322,7 +392,10 @@ public class Generator : MonoBehaviour
    				localTileIndex.z += 1;
    			}
 			
-			return null; //RETURN TEXTURE!!!
+			Texture2D newTexture = new Texture2D ( localRegion.world.tileSize * localRegion.world.regionDimensions.x, localRegion.world.tileSize * localRegion.world.regionDimensions.z );
+			newTexture.SetPixels ( FlattenColourArray ( newTextureColours ), 0 );
+			
+			return newTexture;
 		}
 		
 		return null;
@@ -335,11 +408,11 @@ public class Generator : MonoBehaviour
 		tile.environment = environment;
 		
 		Int2D pixelIndex = new Int2D ( 0, 0 );
-		while ( pixelIndex.z < worldManager.world.tileDimensions )
+		while ( pixelIndex.z < worldManager.world.tileSize )
 		{
 		
 			pixelIndex.x = 0;
-			while ( pixelIndex.x < worldManager.world.tileDimensions )
+			while ( pixelIndex.x < worldManager.world.tileSize )
 			{
 				
 				tile.pixels[pixelIndex.x, pixelIndex.z] = GetTileColour ( tile );
@@ -504,7 +577,7 @@ public class Generator : MonoBehaviour
 		newWorld.worldPerlin = GeneratePerlinNoise ( seed, new Int2D (( tileSize * regionSize.x ) * worldSize.x, ( tileSize * regionSize.z ) * worldSize.z ));
 		newWorld.environments = GetEnvironments ();
 		
-		newWorld.tileDimensions = tileSize;
+		newWorld.tileSize = tileSize;
 		newWorld.regions = CreateAllRegions ( newWorld );
 		
 		loadingStage = 0;
@@ -553,7 +626,7 @@ public class Generator : MonoBehaviour
 		newRegion.world = newWorld;
 		newRegion.position = new Int2D ( regionIndex.x, regionIndex.z );
 		newRegion.tiles = new Tile[newWorld.regionDimensions.x, newWorld.regionDimensions.z];
-		newRegion.map = new Texture2D ( newRegion.world.tileDimensions * newRegion.world.regionDimensions.x, newRegion.world.tileDimensions * newRegion.world.regionDimensions.z );
+		newRegion.map = new Texture2D ( newRegion.world.tileSize * newRegion.world.regionDimensions.x, newRegion.world.tileSize * newRegion.world.regionDimensions.z );
 		
 		newRegion.tiles = CreateAllTiles ( newRegion );
 		
@@ -594,7 +667,7 @@ public class Generator : MonoBehaviour
 		tile.region = newRegion;
 		tile.position = new Int2D ( tileIndex.x, tileIndex.z );
 		
-		Color[,] tempColourArray = new Color[ newRegion.world.tileDimensions, newRegion.world.tileDimensions ];
+		Color[,] tempColourArray = new Color[ newRegion.world.tileSize, newRegion.world.tileSize ];
 		
 		Int2D colourIndex = new Int2D ( 0, 0 );
 		while ( colourIndex.z < tempColourArray.GetLength ( 1 ))

@@ -282,9 +282,9 @@ public class GameManager : MonoBehaviour
 	}
 
 
-	internal void StartGame ( Int2D worldSize, Int2D regionSize, int tileSize )
+	internal void StartGame ( Int2D worldSize, Int2D regionSize, int desiredTileSize )
 	{
 	
-		worldManager.CreateNewWorld ( worldSize, regionSize, tileSize );
+		worldManager.CreateNewWorld ( worldSize, regionSize, desiredTileSize );
 	}
 }

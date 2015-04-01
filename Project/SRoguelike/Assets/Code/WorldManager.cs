@@ -18,7 +18,7 @@ public class World
 	public Region[,] regions;
 	public Int2D regionDimensions = new Int2D ();
 	
-	public int tileDimensions;
+	public int tileSize;
 	
 	public World ( int argWorldWidth, int argWorldHeight, int argRegionWidth, int argRegionHeight )
 	{
@@ -368,8 +368,10 @@ public class WorldManager : MonoBehaviour
 	}
 	
 	
-	internal void CreateNewWorld ( Int2D worldSize, Int2D regionSize, int tileSize )
+	internal void CreateNewWorld ( Int2D worldSize, Int2D regionSize, int desiredTileSize )
 	{
+		
+		int tileSize = desiredTileSize; //Determine if tileSize will fit in a region, fix if not ( Euclidean Algorithm ?)
 
 		Vector2 seed = new Vector2 ( UnityEngine.Random.Range ( 0.00f, 1.00f ), UnityEngine.Random.Range ( 0.00f, 1.00f ));
 		
