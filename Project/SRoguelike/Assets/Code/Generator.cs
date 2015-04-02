@@ -109,7 +109,7 @@ public class Generator : MonoBehaviour
 						
 							Region currentRegion = loadingRegionQueue.Dequeue ();
 							currentRegion.map = CreateWater ( currentRegion );
-							UpdateTexture ( currentRegion.map );
+							UpdateTexture ( currentRegion );
 						}
 						
 						if ( loadingRegionQueue.Count () == 0 )
@@ -249,8 +249,8 @@ public class Generator : MonoBehaviour
 		meshFilter.mesh = NewPlaneMesh ( new Vector2 ( region.world.regionDimensions.x / 2, region.world.regionDimensions.z / 2 ));
 		
 		MeshRenderer renderer = newRegionObject.AddComponent ( typeof ( MeshRenderer )) as MeshRenderer;
-		renderer.material.mainTexture = region.map;
 		renderer.material.shader = selfIllumDiffuse;
+		renderer.material.mainTexture = region.map;
 
 		newRegionObject.transform.position = new Vector3 (( region.position.x * region.world.regionDimensions.x ), 0, ( region.world.regionDimensions.z * region.position.z ) );
 		newRegionObject.transform.parent = region.world.worldObject.transform;
@@ -383,7 +383,7 @@ public class Generator : MonoBehaviour
 						//UnityEngine.Debug.Log ( "I x " + localTileIndex.x + " z " + localTileIndex.z );
 						//UnityEngine.Debug.Log ( "O x " + offset.x + " z " + offset.z );
 						//UnityEngine.Debug.Log ( "C x " + ( localTileIndex.x + offset.x ) + " z " + ( localTileIndex.z + offset.z ));
-						newTextureColours[offset.x, offset.z] = Color.red; //localColour;
+						newTextureColours[offset.x, offset.z] = localColour;
 					}
 					
    					localTileIndex.x += 1;
@@ -398,6 +398,7 @@ public class Generator : MonoBehaviour
 			return newTexture;
 		}
 		
+		UnityEngine.Debug.Log ( "Null" );
 		return null;
 	}
 	
@@ -435,12 +436,13 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	private Texture2D UpdateTexture ( Texture2D texture )
+	private int UpdateTexture ( Region region )
 	{
 		
-		texture.Apply ( false, false );
+		region.map.Apply ( false, false );
+		region.regionObject.renderer.material.mainTexture = region.map;
 		
-		return texture;
+		return 0;
 	}
 	
 	
@@ -677,7 +679,7 @@ public class Generator : MonoBehaviour
 			while ( colourIndex.x < tempColourArray.GetLength ( 0 ))
 			{
 				
-				tempColourArray[colourIndex.x, colourIndex.z] = Color.red;
+				tempColourArray[colourIndex.x, colourIndex.z] = Color.white;
 				colourIndex.x += 1;
 			}
 			

@@ -337,6 +337,22 @@ public class UserInterface : MonoBehaviour
 		GUILayout.FlexibleSpace ();
 		GUILayout.BeginVertical ();
 		
+		GUILayout.Label ( "Theme", labelLeftMediumStyle );
+		if ( GUILayout.Button ( "Light", normalButton ))
+		{
+			
+			Camera.main.backgroundColor = new Color ( 0.898f, 0.898f, 0.898f, 1 );
+		}
+		if ( GUILayout.Button ( "Dark", normalButton ))
+		{
+			
+			Camera.main.backgroundColor = new Color ( 0.396f, 0.396f, 0.396f, 1 );
+		}
+		
+		GUILayout.EndVertical ();
+		GUILayout.FlexibleSpace ();
+		GUILayout.BeginVertical ();
+		
 		GUILayout.Label ( "Language", labelLeftMediumStyle );
 		GUILayout.Button ( "English", normalButton );
 		GUILayout.Button ( "Nederlands", normalButton );
