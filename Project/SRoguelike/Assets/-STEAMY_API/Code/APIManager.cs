@@ -41,6 +41,7 @@ public class APIManager : MonoBehaviour
 		user.me = GetMe ( client, user );
 		
 		//UnityEngine.Debug.Log ( GetFrontPage ( client, user ));
+		//UnityEngine.Debug.Log ( GetDownloadHealth ( client, user ));
 		
 		return user;
 	}
@@ -101,7 +102,7 @@ public class APIManager : MonoBehaviour
 		
 		client.Authenticator = new HttpBasicAuthenticator ( user.apikey.id, user.apikey.secret );
 		
-		RestRequest request = new RestRequest ( "/api/Frontpage", Method.GET );
+		RestRequest request = new RestRequest ( "api/Frontpage", Method.GET );
 		request.RequestFormat = DataFormat.Json;
 		IRestResponse response = client.Execute ( request );
 		
@@ -110,10 +111,58 @@ public class APIManager : MonoBehaviour
 		if ( String.IsNullOrEmpty ( frontPage ) == true )
 		{
 		
-			UnityEngine.Debug.Log ( "Unable to GET for FrontPage, this account may not have access!" );
+			UnityEngine.Debug.Log ( "Unable to GET for FrontPage, something went wrong!" );
 			return null;
 		}
 		
 		return frontPage;
+	}
+	
+	
+	private string GetDownloadHealth ( RestClient client, User user )
+	{
+			
+		string downloadHealth = null;
+		    
+		client.Authenticator = new HttpBasicAuthenticator ( user.apikey.id, user.apikey.secret );
+		    
+		RestRequest request = new RestRequest ( "api/download/health", Method.GET );
+		request.RequestFormat = DataFormat.Json;
+		IRestResponse response = client.Execute ( request );
+		    
+		downloadHealth = response.Content;
+		    
+		if ( String.IsNullOrEmpty ( downloadHealth ) == true )
+		{
+		    
+			UnityEngine.Debug.Log ( "Unable to GET for Download Health, something went wrong!" );
+			return null;
+		}
+		    
+		return downloadHealth;
+	}
+	
+	
+	private string GetAPIVersion ( RestClient client, User user )
+	{
+			
+		string apiVersion = null;
+		    
+		client.Authenticator = new HttpBasicAuthenticator ( user.apikey.id, user.apikey.secret );
+		    
+		RestRequest request = new RestRequest ( "api/Version", Method.GET );
+		request.RequestFormat = DataFormat.Json;
+		IRestResponse response = client.Execute ( request );
+		    
+		apiVersion = response.Content;
+		    
+		if ( String.IsNullOrEmpty ( apiVersion ) == true )
+		{
+		    
+			UnityEngine.Debug.Log ( "Unable to GET for Download Health, something went wrong!" );
+			return null;
+		}
+		    
+		return apiVersion;
 	}
 }
