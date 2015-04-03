@@ -159,7 +159,7 @@ public class APIManager : MonoBehaviour
 		if ( String.IsNullOrEmpty ( apiVersion ) == true )
 		{
 		    
-			UnityEngine.Debug.Log ( "Unable to GET for Download Health, something went wrong!" );
+			UnityEngine.Debug.Log ( "Unable to GET for API Version, something went wrong!" );
 			return null;
 		}
 		    
