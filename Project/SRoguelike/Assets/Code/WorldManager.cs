@@ -352,6 +352,38 @@ public class Int2D
 	}
 }
 
+public static class Find
+{
+	
+	public static int GCD ( int a, int b )
+	{
+	
+		while ( a != 0 && b != 0 )
+		{
+	 		 
+			if ( a > b )
+			{
+			
+				a %= b;
+			} else
+			{
+			
+				b %= a;
+			}
+		}
+	    	
+		if ( a == 0 )
+		{
+		
+			return b;
+		} else
+		{
+		
+			return a;
+		}
+	}
+}
+
 
 public class WorldManager : MonoBehaviour
 {
@@ -371,7 +403,12 @@ public class WorldManager : MonoBehaviour
 	internal void CreateNewWorld ( Int2D worldSize, Int2D regionSize, int desiredTileSize )
 	{
 		
-		int tileSize = desiredTileSize; //Determine if tileSize will fit in a region, fix if not ( Euclidean Algorithm ?)
+		int tileSize = Find.GCD ( desiredTileSize, regionSize.x );
+		if ( tileSize != desiredTileSize )
+		{
+			
+			UnityEngine.Debug.Log ( "Tile size was changed from " + desiredTileSize + " to " + tileSize );
+		}
 
 		Vector2 seed = new Vector2 ( UnityEngine.Random.Range ( 0.00f, 1.00f ), UnityEngine.Random.Range ( 0.00f, 1.00f ));
 		

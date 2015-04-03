@@ -290,37 +290,6 @@ public class Generator : MonoBehaviour
 	}
 	
 	
-	/*public static T[] FlattenArray<T> ( T[,] twoDArray ) where T : class
-	{
-		
-		if ( twoDArray != null )
-		{
-			
-			T[] oneDArray = new T[twoDArray.GetLength ( 0 )  * twoDArray.GetLength ( 1 )];
-		
-			Int2D arrayIndex = new Int2D ( 0, 0 );
-			while ( arrayIndex.z < twoDArray.GetLength ( 1 ))
-			{
-			
-				arrayIndex.x = 0;
-				while ( arrayIndex.x < twoDArray.GetLength ( 0 ))
-				{
-				
-					oneDArray[(arrayIndex.z * twoDArray.GetLength ( 0 )) + arrayIndex.x] = ( twoDArray [arrayIndex.x, arrayIndex.z] );
-					arrayIndex.x += 1;
-				}
-			
-				arrayIndex.z += 1;
-			}
-			
-			return oneDArray;
-		}
-	
-		UnityEngine.Debug.LogError ( "The Original Array is Null!" );
-		return null;
-	}*/
-	
-	
 	private Color[] FlattenColourArray ( Color[,] twoDArray )
 	{
 		
@@ -398,7 +367,7 @@ public class Generator : MonoBehaviour
 			return newTexture;
 		}
 		
-		UnityEngine.Debug.Log ( "Null" );
+		UnityEngine.Debug.Log ( "Unable to Find Environment, 'Water'!" );
 		return null;
 	}
 	

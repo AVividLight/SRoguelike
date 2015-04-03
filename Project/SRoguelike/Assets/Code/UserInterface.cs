@@ -341,7 +341,7 @@ public class UserInterface : MonoBehaviour
 		if ( GUILayout.Button ( "Light", normalButton ))
 		{
 			
-			Camera.main.backgroundColor = new Color ( 0.898f, 0.898f, 0.898f, 1 );
+			Camera.main.backgroundColor = new Color ( 0.875f, 0.875f, 0.875f, 1 );
 		}
 		if ( GUILayout.Button ( "Dark", normalButton ))
 		{
