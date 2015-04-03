@@ -40,6 +40,8 @@ public class APIManager : MonoBehaviour
 		user.apikey = GetKey ( client, username, password );
 		user.me = GetMe ( client, user );
 		
+		//UnityEngine.Debug.Log ( GetFrontPage ( client, user ));
+		
 		return user;
 	}
 	
@@ -51,11 +53,11 @@ public class APIManager : MonoBehaviour
 		
 		client.Authenticator = new HttpBasicAuthenticator ( username, password );
 
-		RestRequest apikeyRequest = new RestRequest ( "api/ApiKey", Method.POST );
-		apikeyRequest.RequestFormat = DataFormat.Json;
-		IRestResponse apikeyResponse = client.Execute ( apikeyRequest );
+		RestRequest request = new RestRequest ( "api/ApiKey", Method.POST );
+		request.RequestFormat = DataFormat.Json;
+		IRestResponse response = client.Execute ( request );
 		
-		newKey = JsonConvert.DeserializeObject<APIKey> ( apikeyResponse.Content );
+		newKey = JsonConvert.DeserializeObject<APIKey> ( response.Content );
 		
 		if ( String.IsNullOrEmpty ( newKey.id ) == true || String.IsNullOrEmpty ( newKey.secret ) == true )
 		{
@@ -75,11 +77,11 @@ public class APIManager : MonoBehaviour
 		
 		client.Authenticator = new HttpBasicAuthenticator ( user.apikey.id, user.apikey.secret );
 		
-		RestRequest meRequest = new RestRequest ( "api/Me", Method.GET );
-		meRequest.RequestFormat = DataFormat.Json;
-		IRestResponse meResponse = client.Execute ( meRequest );
+		RestRequest request = new RestRequest ( "api/Me", Method.GET );
+		request.RequestFormat = DataFormat.Json;
+		IRestResponse response = client.Execute ( request );
 		
-		newMe = JsonConvert.DeserializeObject<Me> ( meResponse.Content );
+		newMe = JsonConvert.DeserializeObject<Me> ( response.Content );
 		
 		if ( String.IsNullOrEmpty ( newMe.userName ) == true )
 		{
@@ -89,5 +91,29 @@ public class APIManager : MonoBehaviour
 		}
 		
 		return newMe;
+	}
+	
+	
+	private string GetFrontPage ( RestClient client, User user )
+	{
+		
+		string frontPage = null;
+		
+		client.Authenticator = new HttpBasicAuthenticator ( user.apikey.id, user.apikey.secret );
+		
+		RestRequest request = new RestRequest ( "/api/Frontpage", Method.GET );
+		request.RequestFormat = DataFormat.Json;
+		IRestResponse response = client.Execute ( request );
+		
+		frontPage = response.Content;
+		
+		if ( String.IsNullOrEmpty ( frontPage ) == true )
+		{
+		
+			UnityEngine.Debug.Log ( "Unable to GET for FrontPage, this account may not have access!" );
+			return null;
+		}
+		
+		return frontPage;
 	}
 }
