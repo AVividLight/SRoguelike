@@ -111,8 +111,8 @@ public class GUIManager : MonoBehaviour
 		information.Add ( "APIKey" );
 		information.Add ( "\t" + user.apikey.id );
 		information.Add ( "\t" + user.apikey.secret );
-		information.Add ( "Me" );
-		information.Add ( "\t" + user.me.userName );
+		information.Add ( "UserAccount" );
+		information.Add ( "\t" + user.userAccount.userName );
 		
 		return 0;
 	}

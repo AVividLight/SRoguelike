@@ -3,12 +3,13 @@ using RestSharp;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.Collections;
+using System.Collections.Generic;
 //Written by Michael Bethke
 public class User
 {
 	
 	public APIKey apikey = new APIKey ();
-	public Me me = new Me ();
+	public UserAccount userAccount = new UserAccount ();
 }
 
 
@@ -20,10 +21,22 @@ public class APIKey
 }
 
 
-public class Me
+public class UserAccount
 {
 	
+	public int accessFailedCount { get; set; }
+	public string email { get; set; }
+	public bool emailConfirmed { get; set; }
+	public string id { get; set; }
+	public bool lockoutEnabled { get; set; }
+	//public byte lockoutEndDateUtc { get; set; } //Might be DateTime, not implemented in API yet.
+	public string passwordHash { get; set; }
+	//public byte phoneNumber { get; set; } //Might be string, not implemented in API yet.
+	public bool phoneNumberConfirmed { get; set; }
+	public List<String> roles { get; set; }
+	public bool twoFactorEnabled { get; set; }
 	public string userName { get; set; }
+	public string status { get; set; }
 }
 
 
@@ -35,10 +48,10 @@ public class APIManager : MonoBehaviour
 		
 		User user = new User ();
 		
-		RestClient client = new RestClient ( "https://steamy.io:443" );
+		RestClient client = new RestClient ( "https://kimochi.co:443" );
 		
 		user.apikey = GetKey ( client, username, password );
-		user.me = GetMe ( client, user );
+		user.userAccount = GetUserAccount ( client, username, password );
 		
 		//UnityEngine.Debug.Log ( GetFrontPage ( client, user ));
 		//UnityEngine.Debug.Log ( GetDownloadHealth ( client, user ));
@@ -71,27 +84,27 @@ public class APIManager : MonoBehaviour
 	}
 	
 	
-	private Me GetMe ( RestClient client, User user )
+	private UserAccount GetUserAccount ( RestClient client, string username, string password )
 	{
 		
-		Me newMe = null;
+		UserAccount newUserAccount = null;
 		
-		client.Authenticator = new HttpBasicAuthenticator ( user.apikey.id, user.apikey.secret );
+		client.Authenticator = new HttpBasicAuthenticator ( username, password );
 		
-		RestRequest request = new RestRequest ( "api/Me", Method.GET );
+		RestRequest request = new RestRequest ( "api/Account", Method.GET );
 		request.RequestFormat = DataFormat.Json;
 		IRestResponse response = client.Execute ( request );
 		
-		newMe = JsonConvert.DeserializeObject<Me> ( response.Content );
+		newUserAccount = JsonConvert.DeserializeObject<UserAccount> ( response.Content );
 		
-		if ( String.IsNullOrEmpty ( newMe.userName ) == true )
+		if ( String.IsNullOrEmpty ( newUserAccount.userName ) == true ) //Not the best way to check for a failure, this is old.
 		{
 			
 			UnityEngine.Debug.Log ( "Unable to GET for Me, this account could be corrupted!" );
 			return null;
 		}
 		
-		return newMe;
+		return newUserAccount;
 	}
 	
 	
