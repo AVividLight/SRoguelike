@@ -362,6 +362,7 @@ public class Generator : MonoBehaviour
    			}
 			
 			Texture2D newTexture = new Texture2D ( localRegion.world.tileSize * localRegion.world.regionDimensions.x, localRegion.world.tileSize * localRegion.world.regionDimensions.z );
+			newTexture.filterMode = FilterMode.Point;
 			newTexture.SetPixels ( FlattenColourArray ( newTextureColours ), 0 );
 			
 			return newTexture;
