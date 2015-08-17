@@ -254,7 +254,7 @@ public class Generator : MonoBehaviour
 
 		newRegionObject.transform.position = new Vector3 (( region.position.x * region.world.regionDimensions.x ), 0, ( region.world.regionDimensions.z * region.position.z ) );
 		newRegionObject.transform.parent = region.world.worldObject.transform;
-		newRegionObject.transform.Rotate ( 270, 0, 0 );
+		newRegionObject.transform.Rotate ( 270, 270, 0 );
 		
 		return newRegionObject;
 	}
@@ -348,10 +348,13 @@ public class Generator : MonoBehaviour
 					foreach ( Color localColour in localRegion.tiles[localTileIndex.x, localTileIndex.z].pixels )
 					{
 						
-						//UnityEngine.Debug.Log ( "L x " + newTextureColours.GetLength ( 0 ) + " z " + newTextureColours.GetLength ( 1 ));
-						//UnityEngine.Debug.Log ( "I x " + localTileIndex.x + " z " + localTileIndex.z );
-						//UnityEngine.Debug.Log ( "O x " + offset.x + " z " + offset.z );
-						//UnityEngine.Debug.Log ( "C x " + ( localTileIndex.x + offset.x ) + " z " + ( localTileIndex.z + offset.z ));
+						/*
+						UnityEngine.Debug.Log ( "L x " + newTextureColours.GetLength ( 0 ) + " z " + newTextureColours.GetLength ( 1 ));
+						UnityEngine.Debug.Log ( "I x " + localTileIndex.x + " z " + localTileIndex.z );
+						UnityEngine.Debug.Log ( "O x " + offset.x + " z " + offset.z );
+						UnityEngine.Debug.Log ( "C x " + ( localTileIndex.x + offset.x ) + " z " + ( localTileIndex.z + offset.z ));
+						*/
+						
 						newTextureColours[offset.x, offset.z] = localColour;
 					}
 					

@@ -19,7 +19,8 @@ public class MouseMovement : MonoBehaviour
 		if ( Input.GetAxis ( "Mouse ScrollWheel" ) != 0 )
 		{
 			
-			gameObject.transform.Translate ( new Vector3 ( 0, 0, Input.GetAxis ( "Mouse ScrollWheel" )));
+			//gameObject.transform.Translate ( new Vector3 ( 0, 0, Input.GetAxis ( "Mouse ScrollWheel" )));
+			Camera.main.orthographicSize += Input.GetAxis ( "Mouse ScrollWheel" );
 		}
 	}
 }
